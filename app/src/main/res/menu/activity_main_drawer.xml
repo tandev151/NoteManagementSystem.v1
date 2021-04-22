@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_category"
+            android:icon="@drawable/ic_baseline_category_24"
+            android:title="Category" />
+        <item
+            android:id="@+id/nav_priority"
+            android:icon="@drawable/ic_baseline_video_library_24"
+            android:title="Priority" />
+        <item
+            android:id="@+id/nav_status"
+            android:icon="@drawable/ic_baseline_status"
+            android:title="Status" />
+        <item
+            android:id="@+id/nav_note"
+            android:icon="@drawable/ic_baseline_event_note_24"
+            android:title="Note" />
+
+    </group>
+
+    <group android:checkableBehavior="all">
+        <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_edit_profile"
+                android:icon="@drawable/ic_baseline_manage_accounts_24"
+                android:title="@string/menu_edit_profile" />
+            <item
+                android:id="@+id/nav_change_password"
+                android:icon="@drawable/ic_baseline_password_24"
+                android:title="@string/menu_change_password" />
+        </menu>
+        </item>
+
+    </group>
+
+</menu>
