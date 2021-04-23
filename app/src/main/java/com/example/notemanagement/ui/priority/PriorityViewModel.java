@@ -10,7 +10,7 @@ public class PriorityViewModel extends ViewModel {
 
     public PriorityViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("This is priority fragment");
     }
 
     public LiveData<String> getText() {

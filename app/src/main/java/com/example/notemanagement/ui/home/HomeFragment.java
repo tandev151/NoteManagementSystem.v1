@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void setUpPieChart(PieChart pieChart){
-        pieChart.setRotationEnabled(false);//  Cho phép xoay Pie Chart
+        pieChart.setRotationEnabled(true);//  Cho phép xoay Pie Chart
         pieChart.getDescription().setEnabled(false);
         pieChart.setHoleRadius(0);//Tạo vòng tròn ở tâm
         pieChart.setTransparentCircleAlpha(0);
@@ -85,9 +85,9 @@ public class HomeFragment extends Fragment {
         pieDataSet.setValueTextSize(15);
         pieDataSet.setValueTextColor(Color.WHITE);
         ArrayList<Integer> colors=new ArrayList<>();
-        colors.add(Color.BLUE);
+        colors.add(Color.GRAY);
         colors.add(Color.RED);
-        colors.add(Color.BLACK);
+        colors.add(Color.BLUE);
 
         pieDataSet.setColors(colors);
 
