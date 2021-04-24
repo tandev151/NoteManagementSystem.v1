@@ -80,6 +80,7 @@ public class Account {
         this.passWord = passWord;
         this.lastName="";
         this.firstName="";
+
     }
     public Account(@NonNull String userName, @NonNull String passWord, @Nullable  String firstName,@Nullable  String lastName){
 

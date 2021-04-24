@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class EditProfileFragment extends Fragment {
     private UserLocalStore userLocalStore;
     private AccountDAO accountDAO;
     private int successUpdate =-1;
+
     public static EditProfileFragment newInstance() {
         return new EditProfileFragment();
     }
@@ -107,6 +109,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
         return root;
+
     }
 
     @Override
@@ -145,4 +148,5 @@ public class EditProfileFragment extends Fragment {
             });
         }
     }
+
 }

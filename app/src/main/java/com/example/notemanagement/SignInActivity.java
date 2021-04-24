@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.userstore.UserLocalStore;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class SignInActivity extends AppCompatActivity {
@@ -52,6 +53,7 @@ public class SignInActivity extends AppCompatActivity {
         }*/
 
         fabSignUp = findViewById(R.id.floatingActionButtonSignUp);
+
         fabSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +66,7 @@ public class SignInActivity extends AppCompatActivity {
         edtPassWord = findViewById(R.id.editTextPasswordSignIn);
         btnSignIn = findViewById(R.id.buttonSignIn);
         cbremember= findViewById(R.id.checkBox);
+
         btnSignIn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -125,7 +128,6 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        //Exist app
         btnExit = findViewById(R.id.buttonExit);
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,4 +15,21 @@
     <string name="menu_edit_profile">Edit Profile</string>
     <string name="menu_change_password">Change Password</string>
 
+<<<<<<< HEAD
+=======
+    <array name="listCategory">
+        <item>Select category</item>
+    </array>
+
+    <array name="listPriority">
+        <item>Select priority</item>
+    </array>
+
+    <array name="listStatus">
+        <item>Select status</item>
+    </array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+>>>>>>> d6447612beac8c4242f0aa2c0e5d19574036bbbe
 </resources>

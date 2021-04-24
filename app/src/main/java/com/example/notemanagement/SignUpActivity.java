@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import com.example.notemanagement.RoomDB;
 import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.userstore.UserLocalStore;
+
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -148,4 +150,5 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return true;
     }
+
 }

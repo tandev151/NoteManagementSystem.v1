@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Context;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.room.RoomDatabase;
+
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,6 +125,7 @@ public class ChangePasswordFragment extends Fragment {
             return false;
         }
         return true;
+
     }
 
 }

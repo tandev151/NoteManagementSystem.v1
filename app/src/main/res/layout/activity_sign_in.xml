@@ -34,7 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-
     <EditText
         android:id="@+id/editTextPasswordSignIn"
         android:layout_width="368dp"
@@ -83,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@+id/checkBox" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButtonSignUp"
+        android:id="@+id/fptAddStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="18dp"

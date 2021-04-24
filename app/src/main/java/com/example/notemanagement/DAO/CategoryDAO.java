@@ -1,5 +1,6 @@
 package com.example.notemanagement.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -9,6 +10,8 @@ import androidx.room.Update;
 
 import com.example.notemanagement.Entity.Category;
 
+
+import java.util.List;
 @Dao
 public interface CategoryDAO {
 
@@ -24,6 +27,7 @@ public interface CategoryDAO {
     @Query("Select * from category where category_id")
     void ShowCategory(Category category);
 
-
+    @Query("Select * from Category")
+    List<Category> getAll();
 
 }

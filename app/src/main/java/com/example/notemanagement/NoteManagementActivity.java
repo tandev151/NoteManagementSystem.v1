@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.userstore.UserLocalStore;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -25,6 +26,7 @@ public class NoteManagementActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private UserLocalStore userLocalStore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

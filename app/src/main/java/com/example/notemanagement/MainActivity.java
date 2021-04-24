@@ -1,8 +1,8 @@
 package com.example.notemanagement;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     UserLocalStore userLocalStore;
     Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         context=this;
         userLocalStore= new UserLocalStore(this);
+
 
         new Handler().postDelayed(new Runnable() {
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
+
             }
         },3000);
     }
