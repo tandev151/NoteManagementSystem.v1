@@ -10,8 +10,8 @@ import androidx.room.Update;
 
 import com.example.notemanagement.Entity.Category;
 
-import java.util.List;
 
+import java.util.List;
 @Dao
 public interface CategoryDAO {
 
@@ -24,8 +24,8 @@ public interface CategoryDAO {
     @Delete
     void deleteCategory(Category category);
 
-    @Query("Select * from category where category_id")
-    void ShowCategory(Category category);
+   // @Query("Select * from category where category_id")
+    //void ShowCategory(Category category);
 
     @Query("Select * from Category")
     List<Category> getAll();

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.renderscript.RenderScript;
@@ -31,6 +32,7 @@ import java.util.List;
 public class NoteFragment extends Fragment {
 
     private NoteViewModel mViewModel;
+
     private FloatingActionButton btnCreateNote;
     private View vCreateNewNote;
     private RecyclerView rvListNote;

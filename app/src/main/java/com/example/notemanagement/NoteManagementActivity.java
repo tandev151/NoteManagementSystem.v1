@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
 
+import com.example.notemanagement.Entity.Account;
+import com.example.notemanagement.userstore.UserLocalStore;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -22,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 public class NoteManagementActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private UserLocalStore userLocalStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +57,23 @@ public class NoteManagementActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         View hView = navigationView.getHeaderView(0);
         TextView tvUserName = hView.findViewById(R.id.textViewUserName);
-        Bundle bundle =getIntent().getExtras();
-        String username = bundle.getString("Username");
-        tvUserName.setText(username);
+        userLocalStore= new UserLocalStore(this);
+        if(userLocalStore.checkRememberPass())
+        {
+            RoomDB.databaseWriteExecutor.execute(()-> {
+                Account u= new Account(userLocalStore.getLoginUser());
+                if (u!=null)
+                {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            tvUserName.setText(u.getUserName());
+                        }
+                    });
+                }
+            });
+            // return;
+        }
+
     }
 
     @Override

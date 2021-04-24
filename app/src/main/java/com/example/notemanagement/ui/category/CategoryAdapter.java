@@ -38,6 +38,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return listCategory.size();
     }
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         public void setNameCategory(TextView nameCategory) {
             this.nameCategory = nameCategory;
@@ -66,6 +67,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         public TextView getCreateDate() {
             return createDate;
         }
+
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
