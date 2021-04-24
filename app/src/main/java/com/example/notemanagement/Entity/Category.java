@@ -45,4 +45,10 @@ public class Category {
     public Time getCreateDate() {
         return createDate;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

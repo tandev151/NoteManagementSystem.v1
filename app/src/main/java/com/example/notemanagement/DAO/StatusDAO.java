@@ -32,4 +32,7 @@ public interface StatusDAO {
 
     @Query("SELECT * FROM Status where name = :name")
     LiveData<List<Status>> getStatusByName(String name);
+
+    @Query("SELECT * FROM Status")
+    List<Status> getAllList();
 }
