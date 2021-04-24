@@ -9,43 +9,39 @@ import androidx.room.TypeConverters;
 
 import com.example.notemanagement.Convert;
 
-import java.util.Calendar;
 import java.util.Date;
 
-@Entity(tableName="Status")
-public class Status {
+@Entity(tableName = "Priority")
+@TypeConverters(Convert.class)
+public class Priority {
+
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name="statusId")
-    private int statusId;
+    @ColumnInfo(name="priorityId")
+    private int priorityId;
 
     @ColumnInfo(name = "name")
     private String name;
 
     @ColumnInfo(name = "createDate")
-    @TypeConverters(Convert.class)
-    private Date  createDate;
-
+    private Date createDate;
 
     @ColumnInfo(name = "userId")
     @ForeignKey(entity = User.class, parentColumns = "userId", childColumns = "userId", onDelete = ForeignKey.CASCADE)
     private int userId;
 
-    public Status() {
+    public Priority() {
     }
 
-    public Status(int statusId, String name, Date createDate) {
-        this.statusId = statusId;
+    public Priority(String name, Date createDate, int idUser) {
         this.name = name;
         this.createDate = createDate;
+        this.userId=idUser;
     }
 
-    public Status(String name, Date createDate, int userId) {
-        this.name = name;
-        this.createDate = createDate;
-        this.userId= userId;
+    public int getPriorityId() {
+        return priorityId;
     }
-
     public int getUserId() {
         return userId;
     }
@@ -53,13 +49,8 @@ public class Status {
     public void setUserId(int userId) {
         this.userId = userId;
     }
-
-    public int getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setPriorityId(int priorityId) {
+        this.priorityId = priorityId;
     }
 
     public String getName() {
@@ -77,4 +68,5 @@ public class Status {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
 }

@@ -1,4 +1,4 @@
-package com.example.notemanagement.ui.category;
+package com.example.notemanagement.ui.priority;
 
 import android.content.Context;
 import android.view.ContextMenu;
@@ -11,30 +11,39 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notemanagement.Entity.Category;
-import com.example.notemanagement.Entity.Status;
+import com.example.notemanagement.Entity.Priority;
 import com.example.notemanagement.R;
-import com.example.notemanagement.ui.status.StatusAdapter;
+import com.example.notemanagement.ui.category.CategoryAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
-    private List<Category> categoryList;
+import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
+import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
+
+
+public class PriorityAdapter extends RecyclerView.Adapter<PriorityAdapter.ViewHolder> {
+    private List<Priority> priorityList;
     private Context context;
 
-    public CategoryAdapter(List<Category> categoryList, Context context) {
-        this.categoryList = categoryList;
+    public PriorityAdapter(List<Priority> priorityList, Context context) {
+        this.priorityList = priorityList;
         this.context = context;
         notifyDataSetChanged();
     }
-    public  void setAdapter(List<Category> listCategory){
-        this.categoryList =listCategory;
+
+    public void setAdapter(List<Priority> listPriority) {
+        this.priorityList = listPriority;
     }
-    public CategoryAdapter(Context context){
-        this.context=context;
+
+    public PriorityAdapter(Context context) {
+        this.context = context;
     }
-    public List<Category> getList(){ return categoryList;}
+
+    public List<Priority> getList() {
+        return priorityList;
+    }
 
     /*
    class holds structure of view
@@ -43,21 +52,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         public TextView tvName;
         public TextView tvCreateDate;
         public Context context;
-        public List<Category> categoryList;
+        public List<Priority> priorityList;
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(),1,1,"Delete");
-            menu.add(getAdapterPosition(),2,1,"Edit");
+            menu.add(getAdapterPosition(), DELETE_CODE, 1, "Delete");
+            menu.add(getAdapterPosition(), UPDATE_CODE, 1, "Edit");
         }
 
-        public ViewHolder(View view, List<Category> listCategory, Context context) {
+        public ViewHolder(View view, List<Priority> listPriority, Context context) {
             super(view);
 
             tvName = (TextView) view.findViewById(R.id.tvName);
             tvCreateDate = (TextView) view.findViewById(R.id.tvCreateDate);
             this.context = context;
-            this.categoryList = listCategory;
+            this.priorityList = listPriority;
 
             view.setOnCreateContextMenuListener(this);
         }
@@ -68,15 +77,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
      */
     @NonNull
     @Override
-    public CategoryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PriorityAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        // Nạp layout cho View biểu diễn phần tử sinh viên
         View statusView =
                 inflater.inflate(R.layout.status_item, parent, false);
 
-        CategoryAdapter.ViewHolder viewHolder = new ViewHolder(statusView, categoryList, context);
+        PriorityAdapter.ViewHolder viewHolder = new PriorityAdapter.ViewHolder(statusView, priorityList, context);
         return viewHolder;
     }
 
@@ -84,8 +92,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     class is used to assign data for view holder
      */
     @Override
-    public void onBindViewHolder(CategoryAdapter.ViewHolder holder, int position) {
-        Category category = categoryList.get(position);
+    public void onBindViewHolder(PriorityAdapter.ViewHolder holder, int position) {
+        Priority category = priorityList.get(position);
 
         holder.tvName.setText(category.getName());
 
@@ -96,8 +104,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        if(categoryList !=null)
-            return categoryList.size();
+        if (priorityList != null)
+            return priorityList.size();
         return 0;
     }
 }

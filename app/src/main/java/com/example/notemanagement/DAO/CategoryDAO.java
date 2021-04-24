@@ -1,5 +1,6 @@
 package com.example.notemanagement.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -9,20 +10,36 @@ import androidx.room.Update;
 
 import com.example.notemanagement.Entity.Category;
 
+import java.util.List;
+
 @Dao
 public interface CategoryDAO {
 
-    @Insert(onConflict=OnConflictStrategy.IGNORE)
-     void insertCategory(Category category) ;
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(Category category);
 
-    @Update(onConflict=OnConflictStrategy.IGNORE)
-    void editCategory(Category category);
+    @Update (onConflict = OnConflictStrategy.IGNORE)
+    void update(Category category);
 
     @Delete
-    void deleteCategory(Category category);
+    void delete(Category category);
 
-    @Query("Select * from category where category_id")
-    void ShowCategory(Category category);
+    @Query("DELETE FROM category where categoryId = (:idCategory)")
+    void deleteById(int idCategory);
+
+    @Query("DELETE FROM category")
+    void deleteAll();
+
+    @Query("SELECT * FROM Category WHERE Category.categoryId =:id")
+    LiveData<Category> getCategory(int id);
+
+    @Query("SELECT * FROM Category WHERE userId = (:idUser)")
+    public LiveData<List<Category>> getCategoryByUser(int idUser);
+
+    @Query("SELECT * FROM Category where Category.userId = :idUser")
+    LiveData<List<Category>> getAllCategory(int idUser);
+
+
 
 
 

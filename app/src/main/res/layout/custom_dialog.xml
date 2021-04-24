@@ -10,12 +10,12 @@
         android:id="@+id/tvDialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:text="Status Form"
         android:textSize="8pt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/edtDialogName"
+        tools:layout_editor_absoluteX="5dp" />
 
     <EditText
         android:id="@+id/edtDialogName"

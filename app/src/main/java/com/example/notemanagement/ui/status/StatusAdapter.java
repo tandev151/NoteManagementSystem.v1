@@ -22,7 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder>  {
+public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder> {
     private List<Status> statusList;
     private Context context;
 
@@ -31,13 +31,18 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
         this.context = context;
         notifyDataSetChanged();
     }
-    public  void setAdapter(List<Status> listStatus){
-        this.statusList=listStatus;
+
+    public void setAdapter(List<Status> listStatus) {
+        this.statusList = listStatus;
     }
-    public StatusAdapter(Context context){
-        this.context=context;
+
+    public StatusAdapter(Context context) {
+        this.context = context;
     }
-    public List<Status> getList(){ return  statusList;}
+
+    public List<Status> getList() {
+        return statusList;
+    }
 
 
     /*
@@ -51,12 +56,12 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(),1,1,"Delete");
-            menu.add(getAdapterPosition(),2,1,"Edit");
+            menu.add(getAdapterPosition(), 1, 1, "Delete");
+            menu.add(getAdapterPosition(), 2, 1, "Edit");
         }
 
 
-        public ViewHolder(View view, List<Status>statusList, Context context) {
+        public ViewHolder(View view, List<Status> statusList, Context context) {
             super(view);
 
             tvName = (TextView) view.findViewById(R.id.tvName);
@@ -65,100 +70,8 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
             this.statusList = statusList;
 
             view.setOnCreateContextMenuListener(this);
-
-
-
-//            view.setOnCreateContextMenuListener( this);
-            //when clicking an status item
-//            view.setOnClickListener((View v) -> {
-//                clickStatusItem(v);
-//            });
-            //process other actions
-
         }
-
-        /*
-        func is to process clicking an status item
-         */
-//        public void clickStatusItem(View v) {
-//            PopupMenu menu = new PopupMenu(v.getContext(), v);
-//            menu.inflate(R.menu.status_menu);
-//
-//            //when click menu
-//            menu.setOnMenuItemClickListener(this);
-//            menu.show();
-//        }
-
-//        @Override
-//        public boolean onMenuItemClick(MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.popup_status_edit:
-//                    clickStatusEdit(getAdapterPosition());
-//                    return true;
-//                case R.id.popup_status_delete:
-//                    clickStatusDelete(getAdapterPosition());
-//                    return true;
-//                default:
-//                    return false;
-//            }
-//        }
-
-        /*
-        func is to handle clicking event of edit item
-         */
-//        void clickStatusEdit(int itemPostion)
-//        {
-////            StatusActivity statusActivity = (StatusActivity)context;
-////            AlertDialog.Builder builder = new AlertDialog.Builder(statusActivity);
-////            ViewGroup viewGroup = (ViewGroup)itemView.findViewById(android.R.id.content);
-////            View dialogView = LayoutInflater.from(this.context).inflate(R.layout.edit_status_custom_dialog, viewGroup, false);
-////            builder.setView(dialogView);
-////            AlertDialog alertDialog = builder.create();
-////            alertDialog.setCancelable(false);
-////            alertDialog.show();
-////
-////            //click close button
-////            Button btnClose =(Button)dialogView.findViewById(R.id.btnClose);
-////            btnClose.setOnClickListener((View view)->{
-////                alertDialog.dismiss();
-////            });
-////
-////            //show old name in text view
-////            TextView tvOldStatusName = (TextView)alertDialog.findViewById(R.id.tvOldStatusName);
-////            tvOldStatusName.setText(this.statusList.get(itemPostion).getName());
-////
-////            TextView tvNewStatusName = (TextView)alertDialog.findViewById(R.id.tvNewStatusName);
-////
-////            Button btnAdd = (Button)dialogView.findViewById(R.id.btnEdit);
-////            btnAdd.setOnClickListener((View addView)->{
-////
-////                if(tvNewStatusName.getText().toString().trim().isEmpty()){
-////                    tvNewStatusName.setError("Please enter the status' name!");
-////                    return;
-////                }
-////
-////                NoteRoomDatabase db = NoteRoomDatabase.getDatabase(context);
-////                db.databaseWriteExecutor.execute(()->{
-////                    Status status = this.statusList.get(itemPostion);
-////                    status.setName(tvNewStatusName.getText().toString().trim());
-////                    db.statusDAO().update(status);
-////
-////                    //load data again
-////                    ((StatusActivity)context).loadstatus();
-////                });
-////
-////                alertDialog.dismiss();
-////            });
-//        }
-//
-//        /*
-//        func is to handle clicking event of delete item
-//         */
-//        void clickStatusDelete(int itemPosition)
-//        {
-//
-//        }
-  }
+    }
 
     /*
     Class is used to set layout for view holder
@@ -193,7 +106,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        if(statusList!=null)
+        if (statusList != null)
             return statusList.size();
         return 0;
     }

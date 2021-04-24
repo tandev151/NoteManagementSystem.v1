@@ -7,19 +7,25 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.notemanagement.DAO.AccountDAO;
+import com.example.notemanagement.DAO.CategoryDAO;
+import com.example.notemanagement.DAO.PriorityDAO;
 import com.example.notemanagement.DAO.StatusDAO;
 import com.example.notemanagement.Entity.Account;
+import com.example.notemanagement.Entity.Category;
+import com.example.notemanagement.Entity.Priority;
 import com.example.notemanagement.Entity.Status;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Account.class, Status.class},version = 1, exportSchema = false)
+@Database(entities = {Account.class, Status.class, Category.class, Priority.class},version = 1, exportSchema = false)
 public abstract class RoomDB  extends RoomDatabase {
 
     //Create database instance
     public abstract AccountDAO accountDAO();
     public abstract StatusDAO statusDAO();
+    public abstract CategoryDAO categoryDAO();
+    public abstract PriorityDAO priorityDAO();
 
     private static String dbName = "notedatabase1";
     private static volatile RoomDB INSTANCE;
