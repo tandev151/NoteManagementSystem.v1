@@ -78,6 +78,8 @@ public class Account {
     public Account(@NonNull String userName, @NonNull String passWord){
         this.userName = userName;
         this.passWord = passWord;
+        this.lastName="";
+        this.firstName="";
     }
     public Account(@NonNull String userName, @NonNull String passWord, @Nullable  String firstName,@Nullable  String lastName){
 
@@ -85,6 +87,25 @@ public class Account {
         this.passWord = passWord;
         this.firstName = firstName;
         this.passWord = passWord;
+    }
+
+    public Account(@NonNull int uid, @NonNull String userName, @NonNull String passWord,
+                   @Nullable  String firstName,@Nullable  String lastName){
+        this.iD= uid;
+        this.userName = userName;
+        this.passWord = passWord;
+        this.firstName = firstName;
+        this.lastName= lastName;
+        this.passWord = passWord;
+    }
+
+    public Account(Account account)
+    {
+        this.iD= account.getID();
+        this.lastName= account.getLastName();
+        this.firstName= account.getFirstName();
+        this.userName= account.getUserName();
+        this.passWord= account.passWord;
     }
 
 }

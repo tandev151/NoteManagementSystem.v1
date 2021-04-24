@@ -22,7 +22,7 @@ public abstract class RoomDB  extends RoomDatabase {
     private static volatile RoomDB INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
-    static final ExecutorService databaseWriteExecutor =
+    public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static synchronized RoomDB getDatabase(final Context context) {

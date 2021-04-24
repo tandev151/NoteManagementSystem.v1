@@ -15,6 +15,9 @@ public interface AccountDAO {
     @Query("Insert into Account(user_name,pass_word) values (:username,:password)")
     void register(String username, String password);
 
+    @Insert
+    void insert(Account account);
+
     @Update
     void update(Account account);
 
@@ -23,4 +26,10 @@ public interface AccountDAO {
 
     @Delete
     void delete(Account account);
+
+    @Query("SELECT * FROM Account where id= :uid ")
+    Account getUserById (Integer uid);
+
+    @Query("SELECT * FROM Account where user_name= :email ")
+    Account getUserByMail (String email);
 }

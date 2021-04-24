@@ -34,6 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
+
     <EditText
         android:id="@+id/editTextPasswordSignIn"
         android:layout_width="368dp"
@@ -47,6 +48,7 @@
         android:hint="Enter your password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextUserNameSignIn" />
+
 
     <CheckBox
         android:id="@+id/checkBox"
