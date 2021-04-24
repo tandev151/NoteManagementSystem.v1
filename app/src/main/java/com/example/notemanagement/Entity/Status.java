@@ -77,4 +77,10 @@ public class Status {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

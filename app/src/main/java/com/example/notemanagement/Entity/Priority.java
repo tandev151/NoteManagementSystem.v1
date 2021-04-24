@@ -1,5 +1,6 @@
 package com.example.notemanagement.Entity;
 
+<<<<<<< HEAD
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -69,4 +70,7 @@ public class Priority {
         this.createDate = createDate;
     }
 
+=======
+public class Priority {
+>>>>>>> fa7cbb89d0a5392410634bc76dc5a5bf04e921af
 }

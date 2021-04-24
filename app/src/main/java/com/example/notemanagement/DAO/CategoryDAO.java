@@ -41,6 +41,7 @@ public interface CategoryDAO {
 
 
 
-
+    @Query("Select * from Category")
+    List<Category> getAll();
 
 }
