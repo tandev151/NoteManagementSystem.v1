@@ -34,4 +34,7 @@ public interface PriorityDAO {
     @Query("SELECT * FROM priority")
     LiveData<List<Priority>> getAll();
 
+    @Query("SELECT * FROM priority")
+    List<Priority> getAllList();
+
 }

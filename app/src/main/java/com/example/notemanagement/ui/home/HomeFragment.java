@@ -12,10 +12,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
+import com.example.notemanagement.DAO.StatusDAO;
+import com.example.notemanagement.Entity.Account;
+import com.example.notemanagement.Entity.Chart;
 import com.example.notemanagement.R;
+import com.example.notemanagement.RoomDB;
+import com.example.notemanagement.userstore.UserLocalStore;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -27,24 +30,30 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private StatusDAO statusDAO;
+    private  Context context;
+    private UserLocalStore userLocalStore;
+    private Account currentAcc;
+    List<Chart>  chartInfo;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+
+
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
          PieChart pieChart = root.findViewById(R.id.piechartDashBoard);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+         context= root.getContext();
+
+        userLocalStore= new UserLocalStore(context);
+        if (userLocalStore.getLoginUser()!=null)
+        {
+            currentAcc= userLocalStore.getLoginUser();
+        }
 
         setUpPieChart(pieChart);
 
@@ -64,8 +73,13 @@ public class HomeFragment extends Fragment {
         addDataSet(pieChart);
     }
 
-    private static void addDataSet(PieChart pieChart) {
+    private  void addDataSet(PieChart pieChart) {
 
+
+//        RoomDB.databaseWriteExecutor.execute(()->{
+//            statusDAO= RoomDB.getDatabase(context).statusDAO();
+//             chartInfo= statusDAO.getStatusNoteById(currentAcc.getID());
+//        });
         ArrayList<String> label = new ArrayList<>();
         ArrayList<PieEntry> value = new ArrayList<>();
 

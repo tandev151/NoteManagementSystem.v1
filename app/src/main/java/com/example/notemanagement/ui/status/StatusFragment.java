@@ -28,9 +28,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
+import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -48,6 +50,9 @@ public class StatusFragment extends Fragment {
     private StatusAdapter statusAdapter;
     private FloatingActionButton fptAddStatus;
     View root;
+    UserLocalStore userLocalStore;
+    Context context;
+    Account currentUser;
 
     //get database
     RoomDB db;
@@ -63,8 +68,6 @@ public class StatusFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
-        // TODO: Use the ViewModel
 
     }
 
@@ -73,24 +76,40 @@ public class StatusFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         statusAdapter = new StatusAdapter(requireContext());
 
-        SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
-        editor.putString("user",String.valueOf(1)).commit();
-        //Get user login now
-        SharedPreferences pref= this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        String hashUser = pref.getString("user", null);
-        userId = Integer.valueOf(hashUser);
+        //SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
+        currentUser = new Account();
+
+        userLocalStore = new UserLocalStore(requireContext());
+
+
+            if (userLocalStore.getLoginUser()!=null)
+            {
+                currentUser= userLocalStore.getLoginUser();
+                this.userId= currentUser.getID();
+            }
 
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
         //get elements in the layout
         recyclerViewStatus = (RecyclerView) view.findViewById(R.id.recyclStatusList);
         //get observable to list in adapter
-        db.statusDAO().getStatusById(this.userId).observe(getViewLifecycleOwner(), status -> {
+
+
+
+
+
+        ////
+        /////thêm userid /accountid
+        /////
+        /////
+        db.statusDAO().getStatusByAccountId(userId).observe(getViewLifecycleOwner(), status -> {
             statusAdapter.setAdapter(status);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
 
-            recyclerViewStatus.setAdapter(statusAdapter);
+
             recyclerViewStatus.setLayoutManager(layoutManager);
+            recyclerViewStatus.setAdapter(statusAdapter);
+            Log.d("lll", "onViewCreated: ");
         });
 
         //Get share preference for check

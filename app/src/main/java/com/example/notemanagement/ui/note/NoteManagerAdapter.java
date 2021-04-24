@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +26,7 @@ import com.example.notemanagement.DAO.NoteDAO;
 import com.example.notemanagement.DAO.StatusDAO;
 import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Note;
+import com.example.notemanagement.Entity.Priority;
 import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
@@ -44,7 +46,8 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
     //private static ClickListener clickListener;
 
     private ArrayList<Note> lNote;
-
+    List<Category> lCategory;
+    List<Status> lStatus;
 
     public ArrayList<Note> getlNote() {
         return lNote;
@@ -60,6 +63,26 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
         this.context = context;
     }
 
+    public NoteManagerAdapter(ArrayList<Note> listNote, List<Category> lcategory, List<Status> lstatus, Context context){
+
+        this.lNote = listNote;
+        this.lStatus = lstatus;
+        this.lCategory = lcategory;
+        this.context = context;
+    }
+
+    private List<Priority> lPriority;
+
+    public NoteManagerAdapter(ArrayList<Note> listNote, List<Category> lcategory, List<Status> lstatus, List<Priority> lpriority, Context context){
+
+        this.lNote = listNote;
+        this.lStatus = lstatus;
+        this.lCategory = lcategory;
+        this.context = context;
+        this.lPriority = lpriority;
+    }
+
+
 
 
     @NonNull
@@ -68,7 +91,7 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_note,parent,false);
-        return new NoteViewHolder(view, lNote, context);
+        return new NoteViewHolder(view, lNote, lCategory, lStatus,lPriority, context);
     }
 
     @Override
@@ -85,6 +108,10 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
             try{  String statusName = noteDAO.getNameStatusById(getlNote().get(position).getStatusId());
                 holder.getTvStatus().setText(statusName);
+            }catch (Exception e){}
+
+            try{  String plandate = lNote.get(position).getPlanDate().toString();
+                holder.getTvPlanDate().setText(plandate);
             }catch (Exception e){}
         });
 
@@ -110,6 +137,22 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
         private TextView tvNameNote, tvPriority, tvStatus, tvCategory, tvPlanDate, tvCreateDate;
 
+        public NoteViewHolder(View itemView, ArrayList<Note> lNote, List<Category> lCategory, List<Status> lStatus, Context context) {
+            super(itemView);
+            this.tvNameNote = (TextView) itemView.findViewById(R.id.tvNameNote);
+            this.tvPriority = (TextView) itemView.findViewById(R.id.tvPriority);
+            this.tvStatus = (TextView) itemView.findViewById(R.id.tvStatus);
+            this.tvCategory = (TextView) itemView.findViewById(R.id.tvCategory);
+            this.tvPlanDate = (TextView) itemView.findViewById(R.id.tvPlanDate);
+            this.tvCreateDate = (TextView) itemView.findViewById(R.id.tvCreateDate);
+
+            this.lNoteEdit = lNote;
+            this.lCategory = lCategory;
+            this.lStatus = lStatus;
+            this.context = context;
+            itemView.setOnClickListener(this);
+        }
+
 
         public TextView getTvNameNote() {
             return tvNameNote;
@@ -123,7 +166,7 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
         Button btnPlanDate;
         TextView tvPlanDateNew;
 
-        public NoteViewHolder(@NonNull View itemView, ArrayList<Note> lNoteEdit, Context context) {
+        public NoteViewHolder(@NonNull View itemView, ArrayList<Note> lNoteEdit, List<Category> lCategory, List<Status> lStatus, List<Priority> lPriority, Context context) {
             super(itemView);
             this.tvNameNote = (TextView) itemView.findViewById(R.id.tvNameNote);
             this.tvPriority = (TextView) itemView.findViewById(R.id.tvPriority);
@@ -133,9 +176,14 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
             this.tvCreateDate = (TextView) itemView.findViewById(R.id.tvCreateDate);
 
             this.lNoteEdit = lNoteEdit;
+            this.lPriority = lPriority;
+            this.lCategory = lCategory;
+            this.lStatus = lStatus;
             this.context = context;
             itemView.setOnClickListener(this);
         }
+
+        List<Priority> lPriority;
 
 
         public TextView getTvPriority() {
@@ -213,8 +261,9 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
             Note note = lNoteEdit.get(index);
 
             Date date = null;
-           // NoteFragment  note_activity = (NoteFragment)context;
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+            // NoteFragment  note_activity = (NoteFragment)context;
+            Context contextNew = new ContextThemeWrapper(context, R.style.AppTheme);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextNew);
             view = LayoutInflater.from(this.context).inflate(R.layout.create_new_note, null,false);
             builder.setView(view);
             tvPlanDateNew = view.findViewById(R.id.tvPlanDateNew);
@@ -224,11 +273,14 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
             spPriorityEdit = (Spinner)view.findViewById(R.id.spPriority);
             spStatusEdit = (Spinner)view.findViewById(R.id.spStatus);
             loadSpinner(index);
+
             if(note.getPlanDate() != null){
                 tvPlanDateNew.setText(note.getPlanDate().toString());
             }
 
+            edtNameNoteEdit.setText(note.getName());
             btnPlanDate= view.findViewById(R.id.btnPlanDate);
+
             try {
                 tvPlanDateNew.setText(note.getPlanDate().toString());
             }catch (Exception e){}
@@ -242,28 +294,31 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
             // thực hiện edit
 
             builder.setPositiveButton("Update", (dialog, which) ->{
-                note.setName(edtNameNoteEdit.getText().toString());
-                note.setCategoryId(((Category) spCategoryEdit.getSelectedItem()).getCategoryId());
-                note.setStatusId(((Status) spStatusEdit.getSelectedItem()).getStatusid());
-                note.setPlanDate(date);
+                try {
+                    note.setName(edtNameNoteEdit.getText().toString());
+                    note.setCategoryId(((Category) spCategoryEdit.getSelectedItem()).getCategoryId());
+                    note.setStatusId(((Status) spStatusEdit.getSelectedItem()).getStatusId());
+                    note.setPlanDate(date);
 
-                RoomDB noteDB = RoomDB.getDatabase(context);
-                NoteDAO noteDAO = noteDB.noteDAO();
+                    RoomDB noteDB = RoomDB.getDatabase(context);
+                    NoteDAO noteDAO = noteDB.noteDAO();
 
-                noteDB.databaseWriteExecutor.execute(() ->{
-                    noteDAO.update(note);
-                });
+                    noteDB.databaseWriteExecutor.execute(() ->{
+                        noteDAO.update(note);
+                    });
 
-                dialog.dismiss();
+                    dialog.dismiss();
+                }catch (Exception e){}
+
             })
                     .setNegativeButton("Close",(dialog, which) ->
                     {
                         // displayMessage("Operation cancel !");
                         dialog.dismiss();
-                    });
+                    })
+                    .show();
 
 
-            builder.show();
         }
 
         public void setDate(TextView tvPlandate, Date planDate)
@@ -314,55 +369,65 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
             RoomDB noteDB = RoomDB.getDatabase(context);
             StatusDAO statusDAO = noteDB.statusDAO();
             CategoryDAO categoryDAO = noteDB.categoryDAO();
+            int temp = 0;
+            int tempS = 0;
 
+            ArrayAdapter<Status> adapterStatus = new ArrayAdapter<Status>(context, android.R.layout.simple_spinner_item, new ArrayList<Status>(lStatus));
+            spStatusEdit.setAdapter(adapterStatus);
+            ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(context, android.R.layout.simple_spinner_item, new ArrayList<Category>(lCategory));
+            spCategoryEdit.setAdapter(adapter);
+            ArrayAdapter<Priority> adapterP = new ArrayAdapter<Priority>(context, android.R.layout.simple_spinner_item, new ArrayList<Priority>(lPriority));
+            spPriorityEdit.setAdapter(adapterP);
+            for(int i = 0; i < lCategory.size(); i++)
+                if(lCategory.get(i).getCategoryId() == lNoteEdit.get(index).getCategoryId())
+                {
+                    temp = i;
+                    break;
+                }
 
-            noteDB.databaseWriteExecutor.execute(() ->{
-                lStatus = statusDAO.getAllList();
-                lCategory = categoryDAO.getAll();
+            spCategoryEdit.setSelection(temp);
 
+            for(int i = 0; i < lStatus.size(); i++)
+                if(lStatus.get(i).getStatusId() == lNoteEdit.get(index).getStatusId())
+                {
+                    tempS = i;
+                    break;
+                }
 
-                ArrayAdapter<Status> adapterStatus = new ArrayAdapter<Status>(context, android.R.layout.simple_spinner_item, new ArrayList<Status>(lStatus));
-                spStatusEdit.setAdapter(adapterStatus);
+            spStatusEdit.setSelection(tempS);
 
+                int tempP = 0;
+            for(int i = 0; i < lPriority.size(); i++)
+            if(lPriority.get(i).getPriorityId() == lNoteEdit.get(index).getPriorityId())
+            {
+                tempP = i;
+                break;
+            }
 
-                spStatusEdit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Status status = (Status) parent.getSelectedItem();
+            spPriorityEdit.setSelection(tempP);
+            spStatusEdit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Status status = (Status) parent.getSelectedItem();
 
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
-
-                ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(context, android.R.layout.simple_spinner_item, new ArrayList<Category>(lCategory));
-                spCategoryEdit.setAdapter(adapter);
-
-                int temp = 0;
-                for(int i = 0; i < lCategory.size(); i++)
-                    if(lCategory.get(i).getCategoryId() == lNoteEdit.get(index).getCategoryId())
-                    {
-                        temp = i;
-                        break;
-                    }
-
-                int indexSpCategory = adapter.getPosition(lCategory.get(temp));
-                spCategoryEdit.setSelection(indexSpCategory);
-
-                spCategoryEdit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Category user = (Category) parent.getSelectedItem();
-
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
             });
+
+            spCategoryEdit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Category user = (Category) parent.getSelectedItem();
+
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+
 
 
         }

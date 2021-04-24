@@ -1,6 +1,6 @@
 package com.example.notemanagement.Entity;
 
-<<<<<<< HEAD
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -18,7 +18,7 @@ public class Priority {
 
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name="priorityId")
+    @ColumnInfo(name = "priorityId")
     private int priorityId;
 
     @ColumnInfo(name = "name")
@@ -37,12 +37,13 @@ public class Priority {
     public Priority(String name, Date createDate, int idUser) {
         this.name = name;
         this.createDate = createDate;
-        this.userId=idUser;
+        this.userId = idUser;
     }
 
     public int getPriorityId() {
         return priorityId;
     }
+
     public int getUserId() {
         return userId;
     }
@@ -50,6 +51,7 @@ public class Priority {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
     public void setPriorityId(int priorityId) {
         this.priorityId = priorityId;
     }
@@ -70,7 +72,10 @@ public class Priority {
         this.createDate = createDate;
     }
 
-=======
-public class Priority {
->>>>>>> fa7cbb89d0a5392410634bc76dc5a5bf04e921af
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

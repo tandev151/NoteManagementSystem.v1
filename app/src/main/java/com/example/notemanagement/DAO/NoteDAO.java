@@ -27,14 +27,17 @@ public interface NoteDAO {
 //    @Query("Select Name from Priority where PriorityId = (:PriorityId)")
 //    String getNamePriorityById(int PriorityId);
 
-    @Query("Select name from Category where category_id = (:CategoryId)")
+    @Query("Select name from Category where categoryId = (:CategoryId)")
     String getNameCategoryById(int CategoryId);
 
-    @Query("Select * from Category where category_id = (:CategoryId)")
+    @Query("Select * from Category where categoryId = (:CategoryId)")
     Category getCategory(int CategoryId);
 
     @Query("Select * from Note")
     List<Note> getAll();
+
+    @Query("Select * from Note where UserId = :UserId")
+    List<Note> getAll(int UserId);
 
     @Delete
     void deleteNote(Note note);

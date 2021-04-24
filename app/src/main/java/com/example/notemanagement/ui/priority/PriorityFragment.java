@@ -22,11 +22,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Priority;
+import com.example.notemanagement.Entity.User;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
 import com.example.notemanagement.ui.category.CategoryAdapter;
+import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -39,12 +42,13 @@ import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
 
 public class PriorityFragment extends Fragment {
 
-    private int userId;
-
     private RecyclerView recyclerViewPriority;
     private PriorityAdapter priorityAdapter;
     private FloatingActionButton fptAddPriority;
     View root;
+    UserLocalStore userLocalStore;
+    Context context;
+    Account currentAcc;
 
     //get database
     RoomDB db;
@@ -67,18 +71,19 @@ public class PriorityFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         priorityAdapter = new PriorityAdapter(requireContext());
 
-        SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
-        editor.putString("user",String.valueOf(1)).commit();
-        //Get user login now
-        SharedPreferences pref= this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        String hashUser = pref.getString("user", null);
-        userId = Integer.valueOf(hashUser);
+        currentAcc = new Account();
+        userLocalStore= new UserLocalStore(requireContext());
+        if (userLocalStore.getLoginUser()!=null)
+        {
+            currentAcc= userLocalStore.getLoginUser();
+
+        }
 
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
         //get elements in the layout
         recyclerViewPriority = (RecyclerView) view.findViewById(R.id.recyclerPriorityList);
         //get observable to list in adapter
-        db.priorityDAO().getPriorityById(this.userId).observe(getViewLifecycleOwner(), priorities -> {
+        db.priorityDAO().getPriorityById(currentAcc.getID()).observe(getViewLifecycleOwner(), priorities -> {
             priorityAdapter.setAdapter(priorities);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -209,7 +214,7 @@ public class PriorityFragment extends Fragment {
             }
 
             db.databaseWriteExecutor.execute(() -> {
-                Priority priority = new Priority(edtNewName.getText().toString(), Calendar.getInstance().getTime(), userId);
+                Priority priority = new Priority(edtNewName.getText().toString(), Calendar.getInstance().getTime(), currentAcc.getID());
 
                 db.priorityDAO().insert(priority);
             });

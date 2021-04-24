@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.notemanagement.Entity.Chart;
 import com.example.notemanagement.Entity.Status;
 
 import java.util.List;
@@ -30,8 +31,11 @@ public interface StatusDAO {
     @Query("SELECT * FROM Status")
     LiveData<List<Status>> getAll();
 
-    @Query("SELECT * FROM Status WHERE userId = (:idUser)")
-    LiveData<List<Status>> getStatusById(int idUser);
+    @Query("SELECT * FROM Status WHERE accountid = (:accountid)")
+    LiveData<List<Status>> getStatusByAccountId(int accountid);
+
+//    @Query("SELECT statusId, count(NoteId) as amount FROM Note WHERE userId = (:idUser) group by statusID ")
+//    List<Chart> getStatusNoteById(int idUser);
 
     @Query("SELECT * FROM Status where name = :name")
     LiveData<List<Status>> getStatusByName(String name);
@@ -39,3 +43,4 @@ public interface StatusDAO {
     @Query("SELECT * FROM Status")
     List<Status> getAllList();
 }
+

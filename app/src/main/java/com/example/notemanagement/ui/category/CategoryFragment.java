@@ -84,7 +84,7 @@ public class CategoryFragment extends Fragment {
         //get elements in the layout
         recyclerViewCategory = (RecyclerView) view.findViewById(R.id.recyclerViewCategory);
         //get observable to list in adapter
-        db.categoryDAO().getCategoryByUser(this.userId).observe(getViewLifecycleOwner(), categories -> {
+        db.categoryDAO().getCategoryByUser(1).observe(getViewLifecycleOwner(), categories -> {
             categoryAdapter.setAdapter(categories);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());

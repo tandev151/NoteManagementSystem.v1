@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {Account.class, Note.class, Status.class, Category.class},version = 1, exportSchema = false)
+@Database(entities = {Account.class, Note.class, Status.class, Category.class, Priority.class},version = 1, exportSchema = false)
 @TypeConverters(Convert.class)
 public abstract class RoomDB  extends RoomDatabase {
 
@@ -41,7 +41,7 @@ public abstract class RoomDB  extends RoomDatabase {
     public abstract NoteDAO noteDAO();
     public abstract CategoryDAO categoryDAO();
 
-    private static String dbName = "notedatabase1";
+    private static String dbName = "notedatabase";
     private static volatile RoomDB INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 

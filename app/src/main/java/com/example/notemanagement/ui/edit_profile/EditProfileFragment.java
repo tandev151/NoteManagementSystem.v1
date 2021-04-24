@@ -87,6 +87,12 @@ public class EditProfileFragment extends Fragment {
                                 accountDAO.update(user);
                                 userLocalStore.storeUserData(user);
                                 successUpdate=1;
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getActivity(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }
                         else
@@ -94,7 +100,7 @@ public class EditProfileFragment extends Fragment {
 
                     });
                     if (successUpdate==1) {
-                        Toast.makeText(getActivity(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(getActivity(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                         successUpdate=-1;
                         return;
                     }

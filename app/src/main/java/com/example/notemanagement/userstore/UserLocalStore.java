@@ -29,13 +29,18 @@ public class UserLocalStore {
         editor.putString("emailUser", user.getUserName());
         editor.putString("lastnameUser", user.getLastName());
         editor.putString("firstnameUser",user.getFirstName());
+        editor.putString("passwordUser", user.getPassWord());
         editor.commit();
     }
 
     public Account getLoginUser()
     {
+        int idUser= userLocalStore.getInt("idUser",0);
         String emailUser =  userLocalStore.getString("emailUser","");
-        return accountDAO.getUserByMail(emailUser);
+        String  lastname= userLocalStore.getString("lastnameUser","");
+        String firstname= userLocalStore.getString("firstnameUser","");
+        String pass = userLocalStore.getString("passwordUser","");
+        return new Account(idUser,emailUser,pass,firstname,lastname);
     }
 
     public void setUserLogined(boolean bool){

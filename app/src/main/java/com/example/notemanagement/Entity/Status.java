@@ -26,10 +26,8 @@ public class Status {
     @TypeConverters(Convert.class)
     private Date  createDate;
 
-
-    @ColumnInfo(name = "userId")
-    @ForeignKey(entity = User.class, parentColumns = "userId", childColumns = "userId", onDelete = ForeignKey.CASCADE)
-    private int userId;
+    @ColumnInfo(name="accountid")
+    private int accountid;
 
     public Status() {
     }
@@ -40,18 +38,10 @@ public class Status {
         this.createDate = createDate;
     }
 
-    public Status(String name, Date createDate, int userId) {
+    public Status(String name, Date createDate, int accountid) {
         this.name = name;
         this.createDate = createDate;
-        this.userId= userId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+        this.accountid= accountid;
     }
 
     public int getStatusId() {
@@ -82,5 +72,13 @@ public class Status {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public int getAccountid() {
+        return accountid;
+    }
+
+    public void setAccountid(int accountid) {
+        this.accountid = accountid;
     }
 }
