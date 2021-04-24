@@ -7,6 +7,8 @@ import android.renderscript.RenderScript;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.DAO.CategoryDAO;
@@ -22,6 +24,7 @@ import java.util.concurrent.Executors;
 
 
 @Database(entities = {Account.class, Note.class, Status.class, Category.class},version = 1, exportSchema = false)
+@TypeConverters(Convert.class)
 public abstract class RoomDB  extends RoomDatabase {
 
     //Create database instance

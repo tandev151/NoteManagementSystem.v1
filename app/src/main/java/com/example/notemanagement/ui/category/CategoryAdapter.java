@@ -1,9 +1,6 @@
 package com.example.notemanagement.ui.category;
 
-<<<<<<< HEAD
-=======
 import android.view.ContextMenu;
->>>>>>> d6447612beac8c4242f0aa2c0e5d19574036bbbe
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +38,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return listCategory.size();
     }
 
-<<<<<<< HEAD
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView nameCategory;
-        private final TextView createDate;
-=======
+
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         public void setNameCategory(TextView nameCategory) {
             this.nameCategory = nameCategory;
@@ -57,18 +50,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
         private TextView nameCategory;
         private TextView createDate;
->>>>>>> d6447612beac8c4242f0aa2c0e5d19574036bbbe
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameCategory = (TextView)itemView.findViewById(R.id.textViewNameCategory);
             createDate = (TextView)itemView.findViewById(R.id.textViewCreateDate);
-<<<<<<< HEAD
-=======
 
             //Add menu context
             itemView.setOnCreateContextMenuListener(this);
->>>>>>> d6447612beac8c4242f0aa2c0e5d19574036bbbe
         }
 
         public TextView getNameCategory() {
@@ -78,14 +67,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         public TextView getCreateDate() {
             return createDate;
         }
-<<<<<<< HEAD
-=======
+
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(getAdapterPosition(),1,1,"Delete");
             menu.add(getAdapterPosition(),2,1,"Edit");
         }
->>>>>>> d6447612beac8c4242f0aa2c0e5d19574036bbbe
     }
 }

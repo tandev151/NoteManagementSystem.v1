@@ -24,8 +24,8 @@ public interface CategoryDAO {
     @Delete
     void deleteCategory(Category category);
 
-    @Query("Select * from category where category_id")
-    void ShowCategory(Category category);
+   // @Query("Select * from category where category_id")
+    //void ShowCategory(Category category);
 
     @Query("Select * from Category")
     List<Category> getAll();

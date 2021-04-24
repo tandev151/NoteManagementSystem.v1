@@ -82,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@+id/checkBox" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fptAddStatus"
+        android:id="@+id/floatingActionButtonSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="18dp"

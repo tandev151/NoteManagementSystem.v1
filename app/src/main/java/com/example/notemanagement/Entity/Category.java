@@ -1,10 +1,16 @@
 package com.example.notemanagement.Entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.TransitionRes;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
+import com.example.notemanagement.Convert;
+
+import java.util.Date;
 import java.sql.Time;
 
 @Entity(tableName = "Category")
@@ -35,14 +41,16 @@ public class Category {
     }
     @ColumnInfo(name = "create_date")
     @NonNull
-    private Time createDate;
+    @TypeConverters(Convert.class)
+    private Date createDate;
 
-    public void setCreateDate(@NonNull Time createDate) {
+    public void setCreateDate(@NonNull Date createDate) {
         this.createDate = createDate;
     }
 
     @NonNull
-    public Time getCreateDate() {
+    @TypeConverters(Convert.class)
+    public Date getCreateDate() {
         return createDate;
     }
 
