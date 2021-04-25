@@ -34,23 +34,22 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        edtUserName = findViewById(R.id.editTextUserNameSignIn);
+        edtPassWord = findViewById(R.id.editTextPasswordSignIn);
+        btnSignIn = findViewById(R.id.buttonSignIn);
+        cbremember= findViewById(R.id.checkBox);
+
         userLocalStore= new UserLocalStore(this);
         context= this;
-        /*if(userLocalStore.checkRememberPass())
+        Intent t= this.getIntent();
+        Boolean remember= t.getBooleanExtra("Remember", false);
+        if(remember)
         {
-            RoomDB.databaseWriteExecutor.execute(()-> {
-                if (userLocalStore.getLoginUser()!=null)
-                {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Intent mainActivity = new Intent(context, NoteManagementActivity.class);
-                            context.startActivity(mainActivity);
-                        }
-                    });
-                }
-            });
-            // return;
-        }*/
+            Account account= new Account();
+            account= userLocalStore.getLoginUser();
+            edtUserName.setText(account.getUserName());
+            edtPassWord.setText(account.getPassWord());
+        }
 
         fabSignUp = findViewById(R.id.floatingActionButtonSignUp);
 
@@ -62,10 +61,7 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        edtUserName = findViewById(R.id.editTextUserNameSignIn);
-        edtPassWord = findViewById(R.id.editTextPasswordSignIn);
-        btnSignIn = findViewById(R.id.buttonSignIn);
-        cbremember= findViewById(R.id.checkBox);
+
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
 

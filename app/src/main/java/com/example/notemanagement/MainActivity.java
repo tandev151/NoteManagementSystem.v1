@@ -30,35 +30,20 @@ public class MainActivity extends AppCompatActivity {
 
                 if(userLocalStore.checkRememberPass())
                 {
-                    RoomDB.databaseWriteExecutor.execute(()-> {
-                        if (userLocalStore.getLoginUser()!=null)
-                        {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Intent mainActivity = new Intent(context, NoteManagementActivity.class);
-                                    context.startActivity(mainActivity);
-                                }
-                            });
-                        }
-                        else
-                        {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Intent signinActivity = new Intent(context, SignInActivity.class);
-                                    context.startActivity(signinActivity);
-                                }
-                            });
-                        }
-                    });
+                    Intent signInActivity = new Intent(context, SignInActivity.class);
+                    if (userLocalStore.getLoginUser()!=null)
+                    {
+                        signInActivity.putExtra("Remember", true);
+
+                    }
+
+                    context.startActivity(signInActivity);
                 }
                 else
                 {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Intent signinActivity = new Intent(context, SignInActivity.class);
-                            context.startActivity(signinActivity);
-                        }
-                    });
+                    Intent signinActivity = new Intent(context, SignInActivity.class);
+                    context.startActivity(signinActivity);
+
                 }
 
             }
