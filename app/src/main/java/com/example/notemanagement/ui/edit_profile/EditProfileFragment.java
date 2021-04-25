@@ -77,16 +77,23 @@ public class EditProfileFragment extends Fragment {
 
                         if(checkemail!=null ) {
                             if (checkemail.getID() != loginedUser.getID())
-                                successUpdate = 0;
+                            {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getActivity(), "Email đã tồn tại!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                             else {
                                 Account user= new Account(loginedUser.getID(),
                                         edtEmail.getText().toString().trim(),
+                                        loginedUser.getPassWord(),
                                         edtFirstname.getText().toString().trim(),
-                                        edtLastname.getText().toString().trim(),loginedUser.getPassWord());
+                                        edtLastname.getText().toString().trim());
 
                                 accountDAO.update(user);
                                 userLocalStore.storeUserData(user);
-                                successUpdate=1;
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -95,21 +102,8 @@ public class EditProfileFragment extends Fragment {
                                 });
                             }
                         }
-                        else
-                            successUpdate=-1;
 
                     });
-                    if (successUpdate==1) {
-                      //  Toast.makeText(getActivity(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                        successUpdate=-1;
-                        return;
-                    }
-                    else
-                    if(successUpdate==0){
-                        Toast.makeText(getActivity(), "Email đã tồn tại!", Toast.LENGTH_SHORT).show();
-                        successUpdate=-1;
-                        return;
-                    }
 
                 }
             }
