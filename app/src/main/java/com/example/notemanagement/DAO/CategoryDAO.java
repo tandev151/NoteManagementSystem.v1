@@ -44,4 +44,8 @@ public interface CategoryDAO {
     @Query("Select * from Category")
     List<Category> getAll();
 
+    @Query("SELECT * FROM Category WHERE userId = (:userId)")
+    List<Category> getAllByUserId(int userId);
+
+
 }

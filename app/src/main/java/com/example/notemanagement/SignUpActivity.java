@@ -79,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     //Toast.makeText(getApplicationContext(), "Đăng kí thành công", Toast.LENGTH_SHORT).show();
-                                    createDialog("Đăng ký tài khoản thành công","Thông báo");
+                                   // createDialog("Đăng ký tài khoản thành công","Thông báo");
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
                                     context.startActivity(mainActivity);
                                 }

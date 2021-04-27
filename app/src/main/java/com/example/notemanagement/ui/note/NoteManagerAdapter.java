@@ -45,11 +45,11 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
     //private static ClickListener clickListener;
 
-    private ArrayList<Note> lNote;
+    private List<Note> lNote;
     List<Category> lCategory;
     List<Status> lStatus;
 
-    public ArrayList<Note> getlNote() {
+    public List<Note> getlNote() {
         return lNote;
     }
     public Context context;
@@ -73,7 +73,7 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
     private List<Priority> lPriority;
 
-    public NoteManagerAdapter(ArrayList<Note> listNote, List<Category> lcategory, List<Status> lstatus, List<Priority> lpriority, Context context){
+    public NoteManagerAdapter(List<Note> listNote, List<Category> lcategory, List<Status> lstatus, List<Priority> lpriority, Context context){
 
         this.lNote = listNote;
         this.lStatus = lstatus;
@@ -137,7 +137,7 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
         private TextView tvNameNote, tvPriority, tvStatus, tvCategory, tvPlanDate, tvCreateDate;
 
-        public NoteViewHolder(View itemView, ArrayList<Note> lNote, List<Category> lCategory, List<Status> lStatus, Context context) {
+        public NoteViewHolder(View itemView, List<Note> lNote, List<Category> lCategory, List<Status> lStatus, Context context) {
             super(itemView);
             this.tvNameNote = (TextView) itemView.findViewById(R.id.tvNameNote);
             this.tvPriority = (TextView) itemView.findViewById(R.id.tvPriority);
@@ -159,14 +159,14 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
         }
         private List<Status> lStatus;
         private List<Category> lCategory;
-        private ArrayList<Note> lNoteEdit;
+        private List<Note> lNoteEdit;
         private Context context;
         EditText edtNameNoteEdit;
         Spinner spCategoryEdit, spStatusEdit, spPriorityEdit;
         Button btnPlanDate;
         TextView tvPlanDateNew;
 
-        public NoteViewHolder(@NonNull View itemView, ArrayList<Note> lNoteEdit, List<Category> lCategory, List<Status> lStatus, List<Priority> lPriority, Context context) {
+        public NoteViewHolder(@NonNull View itemView, List<Note> lNoteEdit, List<Category> lCategory, List<Status> lStatus, List<Priority> lPriority, Context context) {
             super(itemView);
             this.tvNameNote = (TextView) itemView.findViewById(R.id.tvNameNote);
             this.tvPriority = (TextView) itemView.findViewById(R.id.tvPriority);

@@ -1,5 +1,6 @@
 package com.example.notemanagement.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -38,6 +39,9 @@ public interface NoteDAO {
 
     @Query("Select * from Note where UserId = :UserId")
     List<Note> getAll(int UserId);
+
+    @Query("Select * from Note where UserId = :UserId")
+    LiveData<List<Note>> getAllByUserId(int UserId);
 
     @Delete
     void deleteNote(Note note);

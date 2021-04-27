@@ -42,5 +42,8 @@ public interface StatusDAO {
 
     @Query("SELECT * FROM Status")
     List<Status> getAllList();
+
+    @Query("SELECT * FROM Status WHERE accountid = (:userId)")
+   List<Status> getAllByUserId(int userId);
 }
 

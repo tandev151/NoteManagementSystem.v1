@@ -25,6 +25,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.DAO.CategoryDAO;
@@ -56,7 +57,7 @@ public class NoteFragment extends Fragment {
     private FloatingActionButton btnCreateNote;
     private View vCreateNewNote;
     private RecyclerView rvListNote;
-    private ArrayList<Note> lNote;
+    private List<Note> lNote;
     private NoteManagerAdapter noteManagerAdapter;
     private Button btnPlanDate;
     private Spinner spCategory, spStatus, spPriority;
@@ -64,11 +65,16 @@ public class NoteFragment extends Fragment {
     private List<Status> lStatus;
     private List<Category> lCategory;
     private List<Priority> lPriority;
-    private Button btnAddNote, btnCloseCreate;
     private EditText edtNameNote;
     private Context context;
     private UserLocalStore userLocalStore;
-    private Account currentAcc;
+    public static int userIdCurrent;
+    private RoomDB noteDB;
+    private CategoryDAO categoryDAO;
+    private StatusDAO statusDAO;
+    private PriorityDAO priorityDAO;
+    private AccountDAO accountDAO;
+    private NoteDAO noteDAO;
 
     public static NoteFragment newInstance() {
         return new NoteFragment();
@@ -78,15 +84,20 @@ public class NoteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_note, container, false);
+
+        context=root.getContext();
         rvListNote = root.findViewById(R.id.rvListNote);
         btnCreateNote = root.findViewById(R.id.btnCreateNote);
-        context=root.getContext();
         userLocalStore= new UserLocalStore(context);
 
         btnCreateNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createNewNote();
+                if(userLocalStore.getLoginUser()!=null)
+                    createNewNoteByBtn();
+                else{
+                    Toast.makeText(getActivity().getApplicationContext(), "You must to login !!", Toast.LENGTH_LONG);
+                }
             }
         });
         return root;
@@ -95,134 +106,121 @@ public class NoteFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        createRecyclerView();
+        if(userLocalStore.getLoginUser()!=null) // Kiểm tra nếu có sự đăng nhập của user thì mới thực hiện load dữ liệu
+        {
+            createDatabaseNote();
+            userIdCurrent = userLocalStore.getLoginUser().getID();
+            loadListSpinner(userIdCurrent); // danh sách của các thuộc tính khi muốn tạo một note mới
+            createRecyclerView();
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(), "You must to login !!", Toast.LENGTH_LONG);
+        }
         // TODO: Use the ViewModel
     }
 
     public void createRecyclerView(){
 
         lNote = new ArrayList<Note>();
-        currentAcc = new Account();
-
         if (userLocalStore.getLoginUser()!=null)
         {
-            currentAcc= userLocalStore.getLoginUser();
-            loadListNote(currentAcc.getID());
+            loadListNoteForRecyclerView(userIdCurrent);
         }
-
     }
 
-    public void loadListNote(int idUser) {
-//        Note note = new Note();
-//        note.setCategoryId(4);
-//        note.setName("new note");
-//        note.setCreateDate(null);
-//        note.setPlanDate(null);
-//        note.setPriorityId(1);
-//        note.setStatusId(1);
-//        note.setUserId(3);
+    public void loadListNoteForRecyclerView(int userId) {
 
 
-        RoomDB noteDB = RoomDB.getDatabase(this.requireContext());
-        NoteDAO noteDAO = noteDB.noteDAO();
-        StatusDAO statusDAO = noteDB.statusDAO();
-        CategoryDAO categoryDAO = noteDB.categoryDAO();
-        PriorityDAO priorityDAO = noteDB.priorityDAO();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         rvListNote.setLayoutManager(linearLayoutManager);
+        noteDAO.getAllByUserId(userId).observe(getViewLifecycleOwner(), lNote -> {
 
-        noteDB.databaseWriteExecutor.execute(()->{
-                   // noteDAO.createNewNote(note);
-                    lNote = new ArrayList<Note>(noteDAO.getAll(idUser));
-                    lStatus = statusDAO.getAllList();
-                    lCategory = categoryDAO.getAll();
-                    lPriority = priorityDAO.getAllList();
-                    //noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,requireContext());
+            //noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,requireContext());
             noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,lPriority,requireContext());
-                    //noteManagerAdapter.setlNote(lNote);
-                    rvListNote.setAdapter(noteManagerAdapter);
-                }
-
-        );
+            //noteManagerAdapter.setlNote(lNote);
+            rvListNote.setAdapter(noteManagerAdapter);
+        });
 
 
+
+//        noteDB.databaseWriteExecutor.execute(()->{
+//                    lNote = new ArrayList<Note>(noteDAO.getAll(userId));
+//                    lStatus = statusDAO.getAllList();
+//                    lCategory = categoryDAO.getAll();
+//                    lPriority = priorityDAO.getAllList();
+//                    //noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,requireContext());
+//            noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,lPriority,requireContext());
+//                    //noteManagerAdapter.setlNote(lNote);
+//                    rvListNote.setAdapter(noteManagerAdapter);
+//                }
+//
+//        );
     }
 
+    private void loadListSpinner(int userId){ // Lấy các danh sách
+        lStatus = statusDAO.getAllByUserId(userId);
+        lCategory = categoryDAO.getAllByUserId(userId);
+        lPriority = priorityDAO.getAllByUserId(userId);
+    }
 
-    public void createNewNote(){
-
-        int categoryId = 0, statusId = 0, priorityId;
+    public void createNewNoteByBtn(){
         Date planDate = null;
         Context context = new ContextThemeWrapper(getContext(), R.style.AppTheme);
-        MaterialAlertDialogBuilder buider = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         LayoutInflater layoutInflater = this.getLayoutInflater();
         vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note,null,false);
-        tvPlanDateNew = vCreateNewNote.findViewById(R.id.tvPlanDateNew);
-        buider.setView(vCreateNewNote);
-        loadListStatus();
-
-        // Đổ dữ liệu Category
-        // setSpCategory();
-        try{
-            categoryId =((Category)spCategory.getSelectedItem()).getCategoryId();}catch (Exception e){}
-        // Kết thúc đổ dữ liệu vào Category
-
-        // Đổ dữ liệu Status
-        //setSpStatus();
-        try{
-            statusId =((Status)spStatus.getSelectedItem()).getStatusId();}catch (Exception e){}
-
+        initializationComponentForViewCreateNewNote();
+        builder.setView(vCreateNewNote);
+        loadListForSpinnerViewCreateNewNote();
         setBtnPlanDate(planDate);
-        edtNameNote = vCreateNewNote.findViewById(R.id.edtNameNote);
-        buider.setCancelable(false);
+        builder.setCancelable(false);
 
         //End Button
-        buider.setPositiveButton("Add", (dialog, which) ->{
+        builder.setPositiveButton("Add", (dialog, which) ->{
 
             Note note = new Note();
             try{
                 note.setCategoryId(((Category)spCategory.getSelectedItem()).getCategoryId());}catch (Exception e){}
-            // Kết thúc đổ dữ liệu vào Category
-
-            // Đổ dữ liệu Status
-            //setSpStatus();
             try{
                 note.setStatusId(((Status)spStatus.getSelectedItem()).getStatusId());}catch (Exception e){}
-
             try{
                 note.setPriorityId(((Priority)spPriority.getSelectedItem()).getPriorityId());}catch (Exception e){}
 
             note.setName(edtNameNote.getText().toString());
             note.setCreateDate(Calendar.getInstance().getTime());
             note.setPlanDate(planDate);
-            note.setUserId(currentAcc.getID());//B Biến tạm
-            try{ RoomDB noteDB = RoomDB.getDatabase(requireContext());
-                NoteDAO noteDAO = noteDB.noteDAO();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        noteDAO.createNewNote(note);
-                        dialog.dismiss();
-                    }
-                }).start();
-
-                dialog.dismiss();}catch (Exception e){}
+            note.setUserId(userIdCurrent);
+            createNewNote(note);
+            dialog.dismiss();
 
         })
                 .setNegativeButton("Close",(dialog, which) ->
                 {
-                    // displayMessage("Operation cancel !");
                     dialog.dismiss();
                 });
 
 
-        buider.show();
+        builder.show();
     }
 
+    private void createNewNote(Note note){
+        try {
+            createDatabaseNote();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    noteDAO.createNewNote(note);
+                }
+            }).start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void  setBtnPlanDate(Date planDate){
-        btnPlanDate = vCreateNewNote.findViewById(R.id.btnPlanDate);
+
         btnPlanDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,7 +231,6 @@ public class NoteFragment extends Fragment {
 
     public void setDate(TextView tvPlandate, Date planDate)
     {
-
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -274,91 +271,45 @@ public class NoteFragment extends Fragment {
         datePickerDialog.show();
     }
 
-
-
     private void setSpCategory(){
-        spCategory = vCreateNewNote.findViewById(R.id.spCategory);
-
         ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(requireContext(), android.R.layout.simple_spinner_item, new ArrayList<Category>(lCategory));
-        spCategory.setAdapter(adapter);
-        spCategory.setSelection(0);
-        spCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Category category = (Category) parent.getSelectedItem();
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        if(!adapter.isEmpty()) {
+            spCategory.setAdapter(adapter);
+        }
     }
 
     private void setSpStatus( ){
         spStatus = vCreateNewNote.findViewById(R.id.spStatus);
-        // loadListSpinnerCreateNote();
         ArrayAdapter<Status> adapterStatus = new ArrayAdapter<Status>(requireContext(), android.R.layout.simple_spinner_item, new ArrayList<Status>(lStatus));
-        spStatus.setAdapter(adapterStatus);
-        Integer temp = 1;
-        spStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Status status = (Status) parent.getSelectedItem();
-
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
+        if(!adapterStatus.isEmpty())spStatus.setAdapter(adapterStatus);
     }
 
     private void setSpPriority(){
-        spPriority = vCreateNewNote.findViewById(R.id.spPriority);
-
         ArrayAdapter<Priority> adapterPriority = new ArrayAdapter<Priority>(requireContext(), android.R.layout.simple_spinner_item, lPriority);
-        spPriority.setAdapter(adapterPriority);
-
-        spPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Priority priority = (Priority) parent.getSelectedItem();
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        if(!adapterPriority.isEmpty())spPriority.setAdapter(adapterPriority);
     }
 
-    public void getSelectedCategory(View v) {
-        Category c = (Category) spCategory.getSelectedItem();
-
-    }
-
-    public void loadListStatus(){
-        RoomDB noteDB = RoomDB.getDatabase(requireContext());
-        StatusDAO statusDAO = noteDB.statusDAO();
-        CategoryDAO categoryDAO = noteDB.categoryDAO();
-        AccountDAO userDAO = noteDB.accountDAO();
-        PriorityDAO priorityDAO = noteDB.priorityDAO();
-        noteDB.databaseWriteExecutor.execute(() ->{
-
-            lStatus = statusDAO.getAllList();
-            lCategory = categoryDAO.getAll();
-            lPriority = priorityDAO.getAllList();
+    public void loadListForSpinnerViewCreateNewNote(){
             setSpCategory();
             setSpStatus();
             setSpPriority();
-
-        });
-
-
-
     }
 
-    public void loadListPriority() {
+    private void initializationComponentForViewCreateNewNote(){
 
+        tvPlanDateNew = vCreateNewNote.findViewById(R.id.tvPlanDateNew);
+        btnPlanDate = vCreateNewNote.findViewById(R.id.btnPlanDate);
+        spPriority = vCreateNewNote.findViewById(R.id.spPriority);
+        spCategory = vCreateNewNote.findViewById(R.id.spCategory);
+        edtNameNote = vCreateNewNote.findViewById(R.id.edtNameNote);
+    }
+
+    public void createDatabaseNote() { // Khởi tạo các giá trị cho database
+         noteDB = RoomDB.getDatabase(requireContext());
+         statusDAO = noteDB.statusDAO();
+         categoryDAO = noteDB.categoryDAO();
+         accountDAO = noteDB.accountDAO();
+         priorityDAO = noteDB.priorityDAO();
+         noteDAO = noteDB.noteDAO();
     }
 }
