@@ -3,6 +3,7 @@ package com.example.notemanagement.ui.note;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.renderscript.RenderScript;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,13 +48,17 @@ import com.example.notemanagement.SignInActivity;
 import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static com.example.notemanagement.Utils.CONSTANT.SUCCESS_MESSAGE;
 
 public class NoteFragment extends Fragment {
 
@@ -76,6 +84,7 @@ public class NoteFragment extends Fragment {
     private AccountDAO accountDAO;
     private NoteDAO noteDAO;
 
+
     public static NoteFragment newInstance() {
         return new NoteFragment();
     }
@@ -89,76 +98,60 @@ public class NoteFragment extends Fragment {
         rvListNote = root.findViewById(R.id.rvListNote);
         btnCreateNote = root.findViewById(R.id.btnCreateNote);
         userLocalStore= new UserLocalStore(context);
-
+        lStatus = new ArrayList<Status>();
+        lCategory = new ArrayList<Category>();
+        lPriority = new ArrayList<Priority>();
         btnCreateNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(userLocalStore.getLoginUser()!=null)
+                if(userLocalStore.getLoginUser()!=null) {
                     createNewNoteByBtn();
+                }
                 else{
                     Toast.makeText(getActivity().getApplicationContext(), "You must to login !!", Toast.LENGTH_LONG);
                 }
             }
         });
+
+
+        if(userLocalStore.getLoginUser()!=null) // Kiểm tra nếu có sự đăng nhập của user thì mới thực hiện load dữ liệu
+        {
+            createDatabaseNote();
+            userIdCurrent = userLocalStore.getLoginUser().getID();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                        loadListSpinner(userIdCurrent); // danh sách của các thuộc tính khi muốn tạo một note mới
+                }
+
+            }).start();
+
+            createRecyclerView();
+
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(), "You must to login !!", Toast.LENGTH_LONG);
+        }
         return root;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(userLocalStore.getLoginUser()!=null) // Kiểm tra nếu có sự đăng nhập của user thì mới thực hiện load dữ liệu
-        {
-            createDatabaseNote();
-            noteDB.databaseWriteExecutor.execute(()->{
-            userIdCurrent = userLocalStore.getLoginUser().getID();
-            loadListSpinner(userIdCurrent); // danh sách của các thuộc tính khi muốn tạo một note mới
 
-            });
-            createRecyclerView();
-        }
-        else{
-            Toast.makeText(getActivity().getApplicationContext(), "You must to login !!", Toast.LENGTH_LONG);
-        }
         // TODO: Use the ViewModel
     }
 
     public void createRecyclerView(){
-
-        lNote = new ArrayList<Note>();
-        if (userLocalStore.getLoginUser()!=null)
-        {
-            loadListNoteForRecyclerView(userIdCurrent);
-        }
-    }
-
-    public void loadListNoteForRecyclerView(int userId) {
-
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        rvListNote.setLayoutManager(linearLayoutManager);
-        noteDAO.getAllByUserId(userId).observe(getViewLifecycleOwner(), lNote -> {
-
-            //noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,requireContext());
+        lNote = new ArrayList<>();
+        noteDAO.getAllByUserId(userIdCurrent).observe(getViewLifecycleOwner(), lNote -> {
             noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,lPriority,requireContext());
-            //noteManagerAdapter.setlNote(lNote);
             rvListNote.setAdapter(noteManagerAdapter);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+            rvListNote.setLayoutManager(linearLayoutManager);
         });
 
-
-
-//        noteDB.databaseWriteExecutor.execute(()->{
-//                    lNote = new ArrayList<Note>(noteDAO.getAll(userId));
-//                    lStatus = statusDAO.getAllList();
-//                    lCategory = categoryDAO.getAll();
-//                    lPriority = priorityDAO.getAllList();
-//                    //noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,requireContext());
-//            noteManagerAdapter = new NoteManagerAdapter(lNote,lCategory,lStatus,lPriority,requireContext());
-//                    //noteManagerAdapter.setlNote(lNote);
-//                    rvListNote.setAdapter(noteManagerAdapter);
-//                }
-//
-//        );
     }
 
     private void loadListSpinner(int userId){ // Lấy các danh sách
@@ -167,7 +160,128 @@ public class NoteFragment extends Fragment {
         lPriority = priorityDAO.getAllByUserId(userId);
     }
 
-    public void createNewNoteByBtn(){
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        super.onContextItemSelected(item);
+
+        switch (item.getItemId()) {
+            case 2: //Update
+                //get element was update by index in adapter
+                int index = item.getGroupId();
+                callDialogEditNote(index);
+                break;
+
+            case 1: //delete
+                //get true id
+                int indexDelete = item.getGroupId();
+                Note note = noteManagerAdapter.getlNote().get(indexDelete);
+                noteDB.databaseWriteExecutor.execute(() ->{
+                    noteDAO.deleteNote(note);
+                });
+
+        }
+        return true;
+    }
+
+    private void callDialogEditNote(int index)
+    {
+        Note note = noteManagerAdapter.getlNote().get(index);
+        lCategory = noteManagerAdapter.getlCategory();
+        lPriority = noteManagerAdapter.getlPriority();
+        lStatus = noteManagerAdapter.getlStatus();
+
+        Date planDate = null;
+        Context context = new ContextThemeWrapper(getContext(), R.style.AppTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note,null,false);
+        initializationComponentForViewCreateNewNote();
+        builder.setView(vCreateNewNote);
+        setSpinnerSelect(note);
+
+
+        edtNameNote.setText(note.getName());
+
+        Calendar cal = Calendar.getInstance();
+
+        SimpleDateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
+        DateFormat formater= new SimpleDateFormat("E, MMM dd yyyy");
+
+        if(note.getPlanDate()!= null)
+            tvPlanDateNew.setText(formater.format(note.getPlanDate()));
+
+        setBtnPlanDate();
+
+        try {
+            cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
+            planDate = cal.getTime();
+        }
+        catch (Exception e){}
+
+        builder.setCancelable(false);
+
+        //End Button
+        Date finalPlanDate = planDate;
+        builder.setPositiveButton("Update", (dialog, which) ->{
+            try{
+                note.setCategoryId(((Category)spCategory.getSelectedItem()).getCategoryId());}catch (Exception e){}
+            try{
+                note.setStatusId(((Status)spStatus.getSelectedItem()).getStatusId());}catch (Exception e){}
+            try{
+                note.setPriorityId(((Priority)spPriority.getSelectedItem()).getPriorityId());}catch (Exception e){}
+
+            note.setName(edtNameNote.getText().toString());
+            note.setPlanDate(finalPlanDate);
+
+            noteDB.databaseWriteExecutor.execute(() ->{
+                noteDAO.update(note);
+            });
+
+            dialog.dismiss();
+        })
+                .setNegativeButton("Close",(dialog, which) ->
+                {
+                    dialog.dismiss();
+                });
+
+
+        builder.show();
+    }
+
+    public  void setSpinnerSelect(Note note) {
+
+        int temp = 0;
+        int tempS = 0;
+
+        loadListForSpinnerViewCreateNewNote();
+
+        for (int i = 0; i < lCategory.size(); i++)
+            if (lCategory.get(i).getCategoryId() == note.getCategoryId()) {
+                temp = i;
+                break;
+            }
+
+        spCategory.setSelection(temp);
+
+        for (int i = 0; i < lStatus.size(); i++)
+            if (lStatus.get(i).getStatusId() == note.getStatusId()) {
+                tempS = i;
+                break;
+            }
+
+        spStatus.setSelection(tempS);
+
+        int tempP = 0;
+        for (int i = 0; i < lPriority.size(); i++)
+            if (lPriority.get(i).getPriorityId() == note.getPriorityId()) {
+                tempP = i;
+                break;
+            }
+
+        spPriority.setSelection(tempP);
+    }
+
+    public void createNewNoteByBtn() {
         Date planDate = null;
         Context context = new ContextThemeWrapper(getContext(), R.style.AppTheme);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
@@ -176,10 +290,21 @@ public class NoteFragment extends Fragment {
         initializationComponentForViewCreateNewNote();
         builder.setView(vCreateNewNote);
         loadListForSpinnerViewCreateNewNote();
-        setBtnPlanDate(planDate);
+        setBtnPlanDate();
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
+        DateFormat formater= new SimpleDateFormat("E, MMM dd yyyy");
+        tvPlanDateNew.setText(formater.format(cal.getTime()));
+        try {
+            cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
+            planDate = cal.getTime();
+        }
+        catch (Exception e){}
         builder.setCancelable(false);
 
         //End Button
+        Date finalPlanDate = planDate;
         builder.setPositiveButton("Add", (dialog, which) ->{
 
             Note note = new Note();
@@ -192,17 +317,17 @@ public class NoteFragment extends Fragment {
 
             note.setName(edtNameNote.getText().toString());
             note.setCreateDate(Calendar.getInstance().getTime());
-            note.setPlanDate(planDate);
+            note.setPlanDate(finalPlanDate);
             note.setUserId(userIdCurrent);
+            note.setCreateDate(Calendar.getInstance().getTime());
             createNewNote(note);
             dialog.dismiss();
 
         })
-                .setNegativeButton("Close",(dialog, which) ->
-                {
-                    dialog.dismiss();
-                });
-
+            .setNegativeButton("Close",(dialog, which) ->
+            {
+                dialog.dismiss();
+            });
 
         builder.show();
     }
@@ -222,31 +347,31 @@ public class NoteFragment extends Fragment {
         }
     }
 
-    private void  setBtnPlanDate(Date planDate){
+    private void  setBtnPlanDate(){
 
         btnPlanDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDate(tvPlanDateNew, planDate);
+                setDate(tvPlanDateNew);
             }
         });
     }
 
-    public void setDate(TextView tvPlandate, Date planDate)
+    public void setDate(TextView tvPlanDateNew)
     {
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
         Calendar cal = Calendar.getInstance();
-
+        DateFormat formater= new SimpleDateFormat("E, MMM dd yyyy");
         //if the date is selected
-        if (!tvPlandate.getText().toString().isEmpty())
+        if (!tvPlanDateNew.getText().toString().isEmpty())
         {
             SimpleDateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
             //Calendar cal = Calendar.getInstance();
             try {
-                cal.setTime(simpFormat.parse(tvPlandate.getText().toString()));
+                cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
                 year = (cal.get(Calendar.YEAR));
                 month = cal.get(Calendar.MONTH);
                 day = cal.get(Calendar.DAY_OF_MONTH);
@@ -259,17 +384,12 @@ public class NoteFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day)
             {
-
-                //Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.YEAR,year);
                 cal.set(Calendar.DAY_OF_MONTH,day);
                 cal.set(Calendar.MONTH,month);
-                DateFormat formater= new SimpleDateFormat("E, MMM dd yyyy");
-
-                tvPlandate.setText(formater.format(cal.getTime()));
+                tvPlanDateNew.setText(formater.format(cal.getTime()));
             }
         }, year, month, day);
-        planDate = cal.getTime();
 
         datePickerDialog.show();
     }
@@ -282,7 +402,6 @@ public class NoteFragment extends Fragment {
     }
 
     private void setSpStatus( ){
-        spStatus = vCreateNewNote.findViewById(R.id.spStatus);
         ArrayAdapter<Status> adapterStatus = new ArrayAdapter<Status>(requireContext(), android.R.layout.simple_spinner_item, new ArrayList<Status>(lStatus));
         if(!adapterStatus.isEmpty())spStatus.setAdapter(adapterStatus);
     }
@@ -305,6 +424,7 @@ public class NoteFragment extends Fragment {
         spPriority = vCreateNewNote.findViewById(R.id.spPriority);
         spCategory = vCreateNewNote.findViewById(R.id.spCategory);
         edtNameNote = vCreateNewNote.findViewById(R.id.edtNameNote);
+        spStatus = vCreateNewNote.findViewById(R.id.spStatus);
     }
 
     public void createDatabaseNote() { // Khởi tạo các giá trị cho database
