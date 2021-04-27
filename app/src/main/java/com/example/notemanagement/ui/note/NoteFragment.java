@@ -191,7 +191,7 @@ public class NoteFragment extends Fragment {
         lStatus = noteManagerAdapter.getlStatus();
 
         Date planDate = null;
-        Context context = new ContextThemeWrapper(getContext(), R.style.AppTheme);
+        Context context = new ContextThemeWrapper(getContext(), R.style.AlertDialogTheme);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         LayoutInflater layoutInflater = this.getLayoutInflater();
         vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note,null,false);
@@ -274,8 +274,9 @@ public class NoteFragment extends Fragment {
 
     public void createNewNoteByBtn() {
         Date planDate = null;
-        Context context = new ContextThemeWrapper(getContext(), R.style.AppTheme);
+       Context context = new ContextThemeWrapper(getContext(), R.style.AlertDialogTheme);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        //MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme);
         LayoutInflater layoutInflater = this.getLayoutInflater();
         vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note,null,false);
         initializationComponentForViewCreateNewNote();
@@ -315,6 +316,7 @@ public class NoteFragment extends Fragment {
             {
                 dialog.dismiss();
             });
+
 
         builder.show();
     }
