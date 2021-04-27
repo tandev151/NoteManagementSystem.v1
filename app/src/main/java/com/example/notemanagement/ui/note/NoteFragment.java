@@ -197,31 +197,23 @@ public class NoteFragment extends Fragment {
         vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note,null,false);
         initializationComponentForViewCreateNewNote();
         builder.setView(vCreateNewNote);
+        Note noteTemp = new Note(); // để set giá trị của plandate
         setSpinnerSelect(note);
 
 
         edtNameNote.setText(note.getName());
 
         Calendar cal = Calendar.getInstance();
-
-        SimpleDateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
         DateFormat formater= new SimpleDateFormat("E, MMM dd yyyy");
 
         if(note.getPlanDate()!= null)
             tvPlanDateNew.setText(formater.format(note.getPlanDate()));
 
-        setBtnPlanDate();
 
-        try {
-            cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
-            planDate = cal.getTime();
-        }
-        catch (Exception e){}
+        setBtnPlanDate();
 
         builder.setCancelable(false);
 
-        //End Button
-        Date finalPlanDate = planDate;
         builder.setPositiveButton("Update", (dialog, which) ->{
             try{
                 note.setCategoryId(((Category)spCategory.getSelectedItem()).getCategoryId());}catch (Exception e){}
@@ -231,8 +223,7 @@ public class NoteFragment extends Fragment {
                 note.setPriorityId(((Priority)spPriority.getSelectedItem()).getPriorityId());}catch (Exception e){}
 
             note.setName(edtNameNote.getText().toString());
-            note.setPlanDate(finalPlanDate);
-
+            note.setPlanDate(getPlanDate());
             noteDB.databaseWriteExecutor.execute(() ->{
                 noteDAO.update(note);
             });
@@ -290,24 +281,20 @@ public class NoteFragment extends Fragment {
         initializationComponentForViewCreateNewNote();
         builder.setView(vCreateNewNote);
         loadListForSpinnerViewCreateNewNote();
-        setBtnPlanDate();
 
+        Note note = new Note();
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
         DateFormat formater= new SimpleDateFormat("E, MMM dd yyyy");
         tvPlanDateNew.setText(formater.format(cal.getTime()));
-        try {
-            cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
-            planDate = cal.getTime();
-        }
-        catch (Exception e){}
+        setBtnPlanDate();
         builder.setCancelable(false);
 
         //End Button
         Date finalPlanDate = planDate;
         builder.setPositiveButton("Add", (dialog, which) ->{
 
-            Note note = new Note();
+
             try{
                 note.setCategoryId(((Category)spCategory.getSelectedItem()).getCategoryId());}catch (Exception e){}
             try{
@@ -317,9 +304,9 @@ public class NoteFragment extends Fragment {
 
             note.setName(edtNameNote.getText().toString());
             note.setCreateDate(Calendar.getInstance().getTime());
-            note.setPlanDate(finalPlanDate);
+            note.setPlanDate(getPlanDate());
             note.setUserId(userIdCurrent);
-            note.setCreateDate(Calendar.getInstance().getTime());
+
             createNewNote(note);
             dialog.dismiss();
 
@@ -330,6 +317,14 @@ public class NoteFragment extends Fragment {
             });
 
         builder.show();
+    }
+
+    private Date getPlanDate(){
+        Calendar cal = Calendar.getInstance();
+        DateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
+        try{
+        cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));}catch (Exception e){}
+        return cal.getTime();
     }
 
     private void createNewNote(Note note){
