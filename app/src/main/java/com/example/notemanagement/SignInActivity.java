@@ -49,6 +49,7 @@ public class SignInActivity extends AppCompatActivity {
             account= userLocalStore.getLoginUser();
             edtUserName.setText(account.getUserName());
             edtPassWord.setText(account.getPassWord());
+            cbremember.setChecked(true);
         }
 
         fabSignUp = findViewById(R.id.floatingActionButtonSignUp);

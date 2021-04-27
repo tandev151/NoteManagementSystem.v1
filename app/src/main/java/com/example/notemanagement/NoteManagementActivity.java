@@ -3,6 +3,7 @@ package com.example.notemanagement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -48,10 +49,10 @@ public class NoteManagementActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_home,R.id.nav_category,
-                R.id.nav_priority,R.id.nav_status,
+                R.id.nav_home, R.id.nav_category,
+                R.id.nav_priority, R.id.nav_status,
                 R.id.nav_note,
-                R.id.nav_edit_profile,R.id.nav_change_password)
+                R.id.nav_edit_profile, R.id.nav_change_password)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -59,13 +60,11 @@ public class NoteManagementActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         View hView = navigationView.getHeaderView(0);
         TextView tvUserName = hView.findViewById(R.id.textViewUserName);
-        userLocalStore= new UserLocalStore(this);
-        if(userLocalStore.checkRememberPass())
-        {
-            RoomDB.databaseWriteExecutor.execute(()-> {
-                Account u= new Account(userLocalStore.getLoginUser());
-                if (u!=null)
-                {
+        userLocalStore = new UserLocalStore(this);
+        if (userLocalStore.checkRememberPass()) {
+            RoomDB.databaseWriteExecutor.execute(() -> {
+                Account u = new Account(userLocalStore.getLoginUser());
+                if (u != null) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             tvUserName.setText(u.getUserName());
@@ -95,21 +94,27 @@ public class NoteManagementActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(userLocalStore.checkUserLogin()){
-            RoomDB.databaseWriteExecutor.execute(()->{
-                userLocalStore.clearUser();
-                userLocalStore.setRememberPass(false);
-                userLocalStore.setUserLogined(false);
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                if (userLocalStore.checkUserLogin()) {
+                    RoomDB.databaseWriteExecutor.execute(() -> {
+                        userLocalStore.clearUser();
+                        userLocalStore.setRememberPass(false);
+                        userLocalStore.setUserLogined(false);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent= new Intent(NoteManagementActivity.this, SignInActivity.class);
-                        startActivity(intent);
-                    }
-                });
-            });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(NoteManagementActivity.this, SignInActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                    });
+                }
+                break;
+
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

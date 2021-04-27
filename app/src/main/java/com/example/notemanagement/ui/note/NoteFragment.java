@@ -109,8 +109,11 @@ public class NoteFragment extends Fragment {
         if(userLocalStore.getLoginUser()!=null) // Kiểm tra nếu có sự đăng nhập của user thì mới thực hiện load dữ liệu
         {
             createDatabaseNote();
+            noteDB.databaseWriteExecutor.execute(()->{
             userIdCurrent = userLocalStore.getLoginUser().getID();
             loadListSpinner(userIdCurrent); // danh sách của các thuộc tính khi muốn tạo một note mới
+
+            });
             createRecyclerView();
         }
         else{
