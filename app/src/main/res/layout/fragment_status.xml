@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="18dp"
-        android:backgroundTint="#CC64D3"
+        android:backgroundTint="#FF0040"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

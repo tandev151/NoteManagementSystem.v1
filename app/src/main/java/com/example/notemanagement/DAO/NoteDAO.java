@@ -1,5 +1,7 @@
 package com.example.notemanagement.DAO;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -10,8 +12,12 @@ import androidx.room.Update;
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Note;
+import com.example.notemanagement.Entity.Status;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 @Dao
 public interface NoteDAO {
@@ -43,11 +49,18 @@ public interface NoteDAO {
     @Query("Select * from Note where UserId = :UserId")
     LiveData<List<Note>> getAllByUserId(int UserId);
 
+    @Query("SELECT Status.name,count(*) from Note,Status " +
+            "WHERE Note.UserId =:UserId and Status.statusId =Note.StatusId GROUP by Status.name")
+    Cursor getNameAndCountNoteByStatus(int UserId);
+
+    @Query("Select StatusId,Count(*) from Note where UserId = :UserId group by StatusId")
+    Cursor getCountNoteByStatus(int UserId);
     @Delete
     void deleteNote(Note note);
 
     @Update
     void update(Note note);
+
 
 //    @Query("Update Note set Name = :Name, CategoryId = :CategoryId, PriorityId = :PriorityId, StatusId =:StatusId," +
 //            "PlanDate = :PlanDate, CreateDate =:CreateDate where NoteId = :NoteId")

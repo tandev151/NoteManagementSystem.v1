@@ -1,6 +1,7 @@
 package com.example.notemanagement.ui.home;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,10 +13,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.room.Room;
 
-import com.example.notemanagement.DAO.StatusDAO;
-import com.example.notemanagement.Entity.Account;
-import com.example.notemanagement.Entity.Chart;
+
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
 import com.example.notemanagement.userstore.UserLocalStore;
@@ -26,19 +27,22 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.highlight.Highlight;
+
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SplittableRandom;
+
+import javax.sql.DataSource;
 
 public class HomeFragment extends Fragment {
+    private RoomDB roomDB;
 
-    private StatusDAO statusDAO;
     private  Context context;
     private UserLocalStore userLocalStore;
-    private Account currentAcc;
-    List<Chart>  chartInfo;
+
+    public static int userIdCurrent;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,14 +52,20 @@ public class HomeFragment extends Fragment {
         final TextView textView = root.findViewById(R.id.text_home);
          PieChart pieChart = root.findViewById(R.id.piechartDashBoard);
          context= root.getContext();
-
         userLocalStore= new UserLocalStore(context);
         if (userLocalStore.getLoginUser()!=null)
         {
-            currentAcc= userLocalStore.getLoginUser();
+            userIdCurrent = userLocalStore.getLoginUser().getID();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                   setUpPieChart(pieChart);
+                }
+
+            }).start();
+
         }
 
-        setUpPieChart(pieChart);
 
 //        pieChart.setOnChartValueSelectedListener((OnChartValueSelectedListener) this);
 
@@ -63,6 +73,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void setUpPieChart(PieChart pieChart){
+        pieChart.setDrawCenterText(true);
         pieChart.setRotationEnabled(true);//  Cho phép xoay Pie Chart
         pieChart.getDescription().setEnabled(false);
         pieChart.setHoleRadius(0);//Tạo vòng tròn ở tâm
@@ -80,21 +91,30 @@ public class HomeFragment extends Fragment {
 //            statusDAO= RoomDB.getDatabase(context).statusDAO();
 //             chartInfo= statusDAO.getStatusNoteById(currentAcc.getID());
 //        });
-        ArrayList<String> label = new ArrayList<>();
+
         ArrayList<PieEntry> value = new ArrayList<>();
+        Cursor cursor =  roomDB.getDatabase(context).noteDAO().getNameAndCountNoteByStatus(userIdCurrent);
+//        LiveData<List<Status>>[] xData = {RoomDB.getDatabase(context).statusDAO().getStatusByAccountId(userIdCurrent)};
 
-        String[] xData = { "Processing", "Pending", "Done" };
-        float[] yData = { 30, 50, 20 };
-
-        for (int i = 0; i < xData.length;i++) {
-            label.add(xData[i]);
+        for (int i = 0; i<cursor.getCount(); i++)
+        {
+           cursor.moveToNext();
+           value.add(new PieEntry(cursor.getFloat(1),cursor.getString(0)));
         }
 
-        for (int i = 0; i < yData.length;i++){
-            value.add(new PieEntry(yData[i],xData[i]));
-        }
 
-        PieDataSet pieDataSet=new PieDataSet(value,"");
+//
+//
+//
+//        for (int i = 0; i < xData.length;i++) {
+//            label.add(xData[i]);
+//        }
+
+//        for (int i = 0; i < yData.length;i++){
+//            value.add(new PieEntry(yData[i],xData[i]));
+//        }
+
+        PieDataSet pieDataSet=new PieDataSet(value,"Statisfics");
         pieDataSet.setSliceSpace(2);//Đặt khoảng trống ở giữa các lát cắt
         pieDataSet.setValueTextSize(15);
         pieDataSet.setValueTextColor(Color.WHITE);

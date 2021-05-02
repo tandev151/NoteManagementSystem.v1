@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/rvListNote"
             android:layout_alignEnd="@+id/rvListNote"
-            android:backgroundTint="#CC64D3"
+            android:backgroundTint="#FF0040"
             android:layout_marginBottom="18dp"
             android:layout_marginRight="18dp"
             app:srcCompat="@android:drawable/ic_input_add" />

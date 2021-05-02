@@ -79,11 +79,12 @@ public class SignUpActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
 
-                                    Toast.makeText(getApplicationContext(), "Đăng kí thành công", Toast.LENGTH_SHORT).show();
-                                  //  createDialog("Đăng ký tài khoản thành công","Thông báo");
+//                                    Toast.makeText(getApplicationContext(), "Đăng kí thành công", Toast.LENGTH_SHORT).show();
+                                    createDialog("Đăng ký tài khoản thành công","Thông báo");
 
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
                                     context.startActivity(mainActivity);
+                                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 }
                             });
 
@@ -93,7 +94,8 @@ public class SignUpActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Email đã tồn tại", Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getApplicationContext(), "Email đã tồn tại", Toast.LENGTH_LONG).show();
+                                    createDialog("Email đã tồn tại","Thông báo");
                                 }
                             });
 
