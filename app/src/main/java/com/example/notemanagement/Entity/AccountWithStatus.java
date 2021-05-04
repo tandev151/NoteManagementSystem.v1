@@ -8,8 +8,8 @@ public class AccountWithStatus {
     @Embedded
     public Account account;
     @Relation(
-            parentColumn = "id",
-            entityColumn = "accountid"
+            parentColumn = "Id",
+            entityColumn = "AccountId"
     )
     public LiveData<Status> statusList;
 }

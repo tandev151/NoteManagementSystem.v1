@@ -76,7 +76,7 @@ public class EditProfileFragment extends Fragment {
                         checkemail=accountDAO.getUserByMail(edtEmail.getText().toString());
 
                         if(checkemail!=null ) {
-                            if (checkemail.getID() != loginedUser.getID())
+                            if (checkemail.getId() != loginedUser.getId())
                             {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
@@ -86,9 +86,9 @@ public class EditProfileFragment extends Fragment {
                                 });
                             }
                             else {
-                                Account user= new Account(loginedUser.getID(),
+                                Account user= new Account(loginedUser.getId(),
                                         edtEmail.getText().toString().trim(),
-                                        loginedUser.getPassWord(),
+                                        loginedUser.getPassword(),
                                         edtFirstname.getText().toString().trim(),
                                         edtLastname.getText().toString().trim());
 

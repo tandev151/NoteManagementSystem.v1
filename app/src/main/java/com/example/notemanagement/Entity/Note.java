@@ -71,8 +71,12 @@ public class Note {
     @ColumnInfo(name = "CreateDate")
     Date CreateDate;
 
-    @ColumnInfo(name = "UserId")
-    Integer UserId;
+    @ColumnInfo(name = "AccountId")
+    Integer AccountId;
+
+    public Integer getAccountId() {     return AccountId;  }
+
+    public void setAccountId(Integer accountId) {   AccountId = accountId; }
 
     public Integer getNoteId() {
         return NoteId;
@@ -114,7 +118,6 @@ public class Note {
         StatusId = statusId;
     }
 
-
     public Date getPlanDate() {
         return PlanDate;
     }
@@ -132,21 +135,13 @@ public class Note {
         CreateDate = createDate;
     }
 
-    public Integer getUserId() {
-        return UserId;
-    }
-
-    public void setUserId(Integer userId) {
-        UserId = userId;
-    }
-
     public String getUserName(Account user){
         return "";
     }
 
     public Note(){}
 
-    public Note(String name, Integer categoryId, Integer priorityId, Integer statusId, Date planDate, Date createDate, Integer userId) {
+    public Note(String name, Integer categoryId, Integer priorityId, Integer statusId, Date planDate, Date createDate, Integer accountId) {
 
         Name = name;
         CategoryId = categoryId;
@@ -154,6 +149,6 @@ public class Note {
         StatusId = statusId;
         PlanDate = planDate;
         CreateDate = createDate;
-        UserId = userId;
+        AccountId = accountId;
     }
 }

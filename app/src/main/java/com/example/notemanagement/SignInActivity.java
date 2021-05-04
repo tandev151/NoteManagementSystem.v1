@@ -48,7 +48,7 @@ public class SignInActivity extends AppCompatActivity {
             Account account= new Account();
             account= userLocalStore.getLoginUser();
             edtUserName.setText(account.getUserName());
-            edtPassWord.setText(account.getPassWord());
+            edtPassWord.setText(account.getPassword());
             cbremember.setChecked(true);
         }
 
@@ -91,7 +91,7 @@ public class SignInActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                        else if (checkuser.getPassWord().equals(edtPassWord.getText().toString())) {
+                        else if (checkuser.getPassword().equals(edtPassWord.getText().toString())) {
                             userLocalStore.setUserLogined(true);
                             userLocalStore.storeUserData(checkuser);
 

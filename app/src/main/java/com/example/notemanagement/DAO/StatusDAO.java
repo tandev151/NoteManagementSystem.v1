@@ -19,31 +19,34 @@ public interface StatusDAO {
     @Update
     void update(Status status);
 
-    @Query("DELETE FROM Status where name=:statusName ")
+    @Query("UPDATE Status SET IsDeleted = 1 where Name=:statusName ")
     void deleteStatusByName (String statusName);
 
-    @Query("DELETE FROM Status where statusId=:statusId ")
+    @Query("UPDATE Status SET IsDeleted=1 where statusId=:statusId ")
     void deleteStatusById(int statusId);
 
-    @Query ("DELETE FROM Status")
+    @Query ("UPDATE Status SET IsDeleted=1 ")
     void deleteAll();
 
-    @Query("SELECT * FROM Status")
+    @Query("SELECT * FROM Status WHERE IsDeleted=0")
     LiveData<List<Status>> getAll();
 
-    @Query("SELECT * FROM Status WHERE accountid = (:accountid)")
-    LiveData<List<Status>> getStatusByAccountId(int accountid);
+    @Query("SELECT * FROM Status WHERE AccountId = (:accountId) AND IsDeleted=0")
+    LiveData<List<Status>> getStatusByAccountId(int accountId);
 
 //    @Query("SELECT statusId, count(NoteId) as amount FROM Note WHERE userId = (:idUser) group by statusID ")
 //    List<Chart> getStatusNoteById(int idUser);
 
-    @Query("SELECT * FROM Status where name = :name")
+    @Query("UPDATE Status SET Name= (:nameStatus) WHERE StatusId= (:statusId) AND IsDeleted=0")
+    void updateNameStatus(int statusId, String nameStatus);
+
+    @Query("SELECT * FROM Status where Name = (:name) AND IsDeleted=0")
     LiveData<List<Status>> getStatusByName(String name);
 
-    @Query("SELECT * FROM Status")
-    List<Status> getAllList();
+    @Query(("SELECT * FROM Status WHERE Name= (:nameStatus) AND IsDeleted=0"))
+    Status getStatusByNameDuplicate(String nameStatus);
 
-    @Query("SELECT * FROM Status WHERE accountid = (:userId)")
-   List<Status> getAllByUserId(int userId);
+    @Query("SELECT * FROM Status WHERE AccountId = (:accountId) AND IsDeleted=0")
+   List<Status> getAllByUserId(int accountId);
 }
 

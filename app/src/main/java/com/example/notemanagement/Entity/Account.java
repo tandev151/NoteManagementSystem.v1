@@ -10,103 +10,104 @@ import androidx.room.PrimaryKey;
 public class Account {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name = "id")
-    private int iD;
-
-    public void setID(int iD) {
-        this.iD = iD;
-    }
-
-    public int getID() {
-        return iD;
-    }
+    @ColumnInfo(name = "Id")
+    private int Id;
 
     @NonNull
-    @ColumnInfo(name ="user_name")
-    private String userName;
-
-    public void setUserName(@NonNull String userName) {
-        this.userName = userName;
-    }
+    @ColumnInfo(name ="UserName")
+    private String UserName;
 
     @NonNull
-    public String getUserName() {
-        return userName;
-    }
-
-    @NonNull
-    @ColumnInfo(name ="pass_word")
-    private String passWord;
-
-    public void setPassWord(@NonNull String passWord) {
-        this.passWord = passWord;
-    }
-
-    @NonNull
-    public String getPassWord() {
-        return passWord;
-    }
+    @ColumnInfo(name ="Password")
+    private String Password;
 
     @Nullable
-    @ColumnInfo(name="first_name")
-    private String firstName;
-
-    public void setFirstName( String firstName) {
-        this.firstName = firstName;
-    }
-
-
-    public String getFirstName() {
-        return firstName;
-    }
+    @ColumnInfo(name="FirstName")
+    private String FirstName;
 
     @Nullable
-    @ColumnInfo(name="last_name")
-    private String lastName;
+    @ColumnInfo(name="LastName")
+    private String LastName;
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-
-    public String getLastName() {
-        return lastName;
-    }
     public  Account(){
 
     }
     public Account(@NonNull String userName, @NonNull String passWord){
-        this.userName = userName;
-        this.passWord = passWord;
-        this.lastName="";
-        this.firstName="";
+        this.UserName = userName;
+        this.Password = passWord;
+        this.LastName="";
+        this.FirstName="";
 
     }
     public Account(@NonNull String userName, @NonNull String passWord, @Nullable  String firstName,@Nullable  String lastName){
 
-        this.userName = userName;
-        this.passWord = passWord;
-        this.firstName = firstName;
-        this.passWord = passWord;
+        this.UserName = userName;
+        this.Password = passWord;
+        this.FirstName = firstName;
+        this.LastName = lastName;
     }
 
     public Account(@NonNull int uid, @NonNull String userName, @NonNull String passWord,
                    @Nullable  String firstName,@Nullable  String lastName){
-        this.iD= uid;
-        this.userName = userName;
-        this.passWord = passWord;
-        this.firstName = firstName;
-        this.lastName= lastName;
-        this.passWord = passWord;
+        this.Id= uid;
+        this.UserName = userName;
+        this.Password = passWord;
+        this.FirstName = firstName;
+        this.LastName= lastName;
+        this.Password = passWord;
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    @NonNull
+    public String getUserName() {
+        return UserName;
+    }
+
+    public void setUserName(@NonNull String userName) {
+        UserName = userName;
+    }
+
+    @NonNull
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(@NonNull String password) {
+        Password = password;
+    }
+
+    @Nullable
+    public String getFirstName() {
+        return FirstName;
+    }
+
+    public void setFirstName(@Nullable String firstName) {
+        FirstName = firstName;
+    }
+
+    @Nullable
+    public String getLastName() {
+        return LastName;
+    }
+
+    public void setLastName(@Nullable String lastName) {
+        LastName = lastName;
     }
 
     public Account(Account account)
     {
-        this.iD= account.getID();
-        this.lastName= account.getLastName();
-        this.firstName= account.getFirstName();
-        this.userName= account.getUserName();
-        this.passWord= account.passWord;
+        this.Id= account.getId();
+        this.LastName= account.getLastName();
+        this.FirstName= account.getFirstName();
+        this.UserName= account.getUserName();
+        this.Password= account.getPassword();
     }
 
 }

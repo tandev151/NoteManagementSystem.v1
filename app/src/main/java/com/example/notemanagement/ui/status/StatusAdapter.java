@@ -100,7 +100,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
         holder.tvName.setText(status.getName());
 
         //get date and format it
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         holder.tvCraeteDate.setText(dateFormat.format(status.getCreateDate()));
     }
 

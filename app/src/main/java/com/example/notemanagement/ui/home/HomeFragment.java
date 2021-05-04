@@ -28,7 +28,11 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +59,7 @@ public class HomeFragment extends Fragment {
         userLocalStore= new UserLocalStore(context);
         if (userLocalStore.getLoginUser()!=null)
         {
-            userIdCurrent = userLocalStore.getLoginUser().getID();
+            userIdCurrent = userLocalStore.getLoginUser().getId();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -74,13 +78,16 @@ public class HomeFragment extends Fragment {
 
     public void setUpPieChart(PieChart pieChart){
         pieChart.setDrawCenterText(true);
+       // pieChart.setEntryLabelTextSize(9);
+        pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setRotationEnabled(true);//  Cho phép xoay Pie Chart
         pieChart.getDescription().setEnabled(false);
-        pieChart.setHoleRadius(0);//Tạo vòng tròn ở tâm
+        pieChart.setHoleRadius(1);//Tạo vòng tròn ở tâm
         pieChart.setTransparentCircleAlpha(0);
 //        pieChart.setCenterText("Statistics");//Tạo text cho vòng tròn ở tâm
         pieChart.setCenterTextSize(10);
-        pieChart.setDrawEntryLabels(false);
+       // pieChart.setDrawEntryLabels(false);
+
         addDataSet(pieChart);
     }
 
@@ -100,6 +107,7 @@ public class HomeFragment extends Fragment {
         {
            cursor.moveToNext();
            value.add(new PieEntry(cursor.getFloat(1),cursor.getString(0)));
+
         }
 
 
@@ -115,21 +123,42 @@ public class HomeFragment extends Fragment {
 //        }
 
         PieDataSet pieDataSet=new PieDataSet(value,"Statisfics");
+
         pieDataSet.setSliceSpace(2);//Đặt khoảng trống ở giữa các lát cắt
-        pieDataSet.setValueTextSize(15);
+        pieDataSet.setValueTextSize(9);
         pieDataSet.setValueTextColor(Color.WHITE);
         ArrayList<Integer> colors=new ArrayList<>();
         colors.add(Color.GRAY);
         colors.add(Color.RED);
         colors.add(Color.BLUE);
 
+        for (int color: ColorTemplate.MATERIAL_COLORS) {
+            colors.add(color);
+        }
+
+
         pieDataSet.setColors(colors);
 
-//        Legend legend=pieChart.getLegend();
+      Legend legend=pieChart.getLegend();
+      legend.setEnabled(false);
 //        legend.setForm(Legend.LegendForm.CIRCLE);
 //        legend.setPosition(Legend.LegendPosition.LEFT_OF_CHART);
 
+        pieDataSet.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return String.valueOf(value)+" ";
+            }
+        });
+
+
         PieData pieData=new PieData(pieDataSet);
+        pieData.setDrawValues(true);
+
+        pieData.setValueTextSize(9f);
+        pieData.setValueTextColor(Color.BLACK);
+
+
         pieChart.setData(pieData);
         pieChart.invalidate();
     }

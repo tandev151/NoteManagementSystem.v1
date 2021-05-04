@@ -16,56 +16,67 @@ import java.util.Date;
 public class Status {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name="statusId")
-    private int statusId;
+    @ColumnInfo(name="StatusId")
+    private int StatusId;
 
-    @ColumnInfo(name = "name")
-    private String name;
+    @ColumnInfo(name = "Name")
+    private String Name;
 
-    @ColumnInfo(name = "createDate")
+    @ColumnInfo(name = "CreateDate")
     @TypeConverters(Convert.class)
-    private Date  createDate;
+    private Date  CreateDate;
 
-    @ColumnInfo(name="accountid")
-    private int accountid;
+    @ColumnInfo(name="AccountId")
+    private int AccountId;
+
+    @ColumnInfo(name = "IsDeleted", defaultValue = "false")
+    private boolean IsDeleted;
+
+    public boolean IsDeleted() {
+        return IsDeleted;
+    }
+
+    public void setIsDeleted(boolean deleteD) {
+        IsDeleted = deleteD;
+    }
 
     public Status() {
     }
 
     public Status(int statusId, String name, Date createDate) {
-        this.statusId = statusId;
-        this.name = name;
-        this.createDate = createDate;
+        this.StatusId = statusId;
+        this.Name = name;
+        this.CreateDate = createDate;
     }
 
-    public Status(String name, Date createDate, int accountid) {
-        this.name = name;
-        this.createDate = createDate;
-        this.accountid= accountid;
+    public Status(String name, Date createDate, int accountId) {
+        this.Name = name;
+        this.CreateDate = createDate;
+        this.AccountId= accountId;
     }
 
     public int getStatusId() {
-        return statusId;
+        return StatusId;
     }
 
     public void setStatusId(int statusId) {
-        this.statusId = statusId;
+        this.StatusId = statusId;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return CreateDate;
     }
 
     public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+        this.CreateDate = createDate;
     }
 
     @NonNull
@@ -74,11 +85,11 @@ public class Status {
         return getName();
     }
 
-    public int getAccountid() {
-        return accountid;
+    public int getAccountId() {
+        return AccountId;
     }
 
-    public void setAccountid(int accountid) {
-        this.accountid = accountid;
+    public void setAccountId(int accountid) {
+        this.AccountId = accountid;
     }
 }

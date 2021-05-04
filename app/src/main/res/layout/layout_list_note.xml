@@ -18,7 +18,7 @@
             android:id="@+id/tvNameNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name note"
+            android:text="Null"
             android:textSize="14dp"/>
     </LinearLayout>
 
@@ -34,7 +34,7 @@
             android:id="@+id/tvCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name category"
+            android:text="Null"
             android:textSize="14dp"/>
     </LinearLayout>
 
@@ -50,7 +50,7 @@
             android:id="@+id/tvPriority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name priority"
+            android:text="Null"
             android:textSize="14dp"/>
     </LinearLayout>
 
@@ -66,7 +66,7 @@
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name status"
+            android:text="Null"
             android:textSize="14dp"/>
     </LinearLayout>
 
@@ -82,7 +82,7 @@
             android:id="@+id/tvPlanDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Plan date"
+            android:text="Null"
             android:textSize="14dp"/>
     </LinearLayout>
 
@@ -98,7 +98,7 @@
             android:id="@+id/tvCreateDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create date"
+            android:text="Null"
             android:textSize="14dp"/>
     </LinearLayout>
 

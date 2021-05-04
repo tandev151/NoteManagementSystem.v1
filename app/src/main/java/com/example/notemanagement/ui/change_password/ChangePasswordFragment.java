@@ -67,10 +67,10 @@ public class ChangePasswordFragment extends Fragment {
                             user = userLocalStore.getLoginUser();
                             if(user!=null )
                             {
-                                if(user.getPassWord().equals(curpass.getText().toString()))
+                                if(user.getPassword().equals(curpass.getText().toString()))
                                 {
                                     if(newpass.getText().toString().equals(confirmpass.getText().toString())){
-                                        user.setPassWord(newpass.getText().toString());
+                                        user.setPassword(newpass.getText().toString());
                                         accountDAO.update(user);
                                         userLocalStore.storeUserData(user);
                                         error=0;

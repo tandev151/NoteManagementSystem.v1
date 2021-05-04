@@ -2,9 +2,7 @@ package com.example.notemanagement.ui.priority;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,18 +15,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notemanagement.Entity.Account;
-import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Priority;
-import com.example.notemanagement.Entity.User;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
-import com.example.notemanagement.ui.category.CategoryAdapter;
 import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -36,7 +29,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Calendar;
 
 import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
-import static com.example.notemanagement.Utils.CONSTANT.MY_PREFERENCE_NAME;
 import static com.example.notemanagement.Utils.CONSTANT.SUCCESS_MESSAGE;
 import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
 
@@ -72,10 +64,9 @@ public class PriorityFragment extends Fragment {
         priorityAdapter = new PriorityAdapter(requireContext());
 
         currentAcc = new Account();
-        userLocalStore= new UserLocalStore(requireContext());
-        if (userLocalStore.getLoginUser()!=null)
-        {
-            currentAcc= userLocalStore.getLoginUser();
+        userLocalStore = new UserLocalStore(requireContext());
+        if (userLocalStore.getLoginUser() != null) {
+            currentAcc = userLocalStore.getLoginUser();
 
         }
 
@@ -83,7 +74,7 @@ public class PriorityFragment extends Fragment {
         //get elements in the layout
         recyclerViewPriority = (RecyclerView) view.findViewById(R.id.recyclerPriorityList);
         //get observable to list in adapter
-        db.priorityDAO().getPriorityById(currentAcc.getID()).observe(getViewLifecycleOwner(), priorities -> {
+        db.priorityDAO().getPriorityById(currentAcc.getId()).observe(getViewLifecycleOwner(), priorities -> {
             priorityAdapter.setAdapter(priorities);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -98,7 +89,7 @@ public class PriorityFragment extends Fragment {
         //Add event for floating action button
         fptAddPriority = (FloatingActionButton) view.findViewById(R.id.fptAddPriority);
         fptAddPriority.setOnClickListener((View v) -> {
-            addNewStatus(v);
+            addNewPriority(v);
         });
     }
 
@@ -142,21 +133,45 @@ public class PriorityFragment extends Fragment {
                 saveDialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText nameCategory = alertDialog.findViewById(R.id.edtDialogName);
-                        if (nameCategory.getText().toString().trim() != null) {
+                        String priorityUpdate = nameCategory.getText().toString().trim();
+
+                        if (priorityUpdate != null) {
+
+
+                            // EditText nameCategory = v.findViewById(R.id.edtDialogName);
                             priority.setName(nameCategory.getText().toString());
                             //New thread for work with database
                             db.databaseWriteExecutor.execute(() -> {
-                                db.priorityDAO().update(priority);
+                                Boolean isDuplicated = db.priorityDAO().getPriorityByName(priorityUpdate) != null ? false : true;
+                                if (isDuplicated) {
+                                    db.priorityDAO().updateNamePriority(priority.getPriorityId(), priorityUpdate);
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getActivity().getApplicationContext(), "Success update Priority", Toast.LENGTH_LONG);
+                                            alertDialog.dismiss();
+                                        }
+                                    });
+
+                                } else {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            nameCategory.setError("This priority is available!!!");
+                                            nameCategory.setFocusable(true);
+                                        }
+                                    });
+
+                                }
+
                             });
                         }
-                        Toast.makeText(getActivity().getApplicationContext(), "Success create category", Toast.LENGTH_LONG);
-                        alertDialog.dismiss();
                     }
                 });
+                if(getActivity() != null  && !getActivity().isFinishing()){
+                    alertDialog.show();
 
-
-                alertDialog.show();
+                }
                 break;
 
             case DELETE_CODE:
@@ -181,10 +196,11 @@ public class PriorityFragment extends Fragment {
     }
 
     /**
-     * Create new status
+     * Create new priority
+     *
      * @param v
      */
-    public void addNewStatus(View v) {
+    public void addNewPriority(View v) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         ViewGroup viewGroup = (ViewGroup) root.findViewById(android.R.id.content);
@@ -209,16 +225,33 @@ public class PriorityFragment extends Fragment {
         btnAdd.setOnClickListener((View addView) -> {
 
             if (edtNewName.getText().toString().trim().isEmpty()) {
-                tvPriorityName.setError("Please enter the priority' name!");
+                edtNewName.setError("Please enter the priority' name!");
                 return;
             }
+            String namePriority = edtNewName.getText().toString().trim();
+            Priority priority = new Priority(namePriority, Calendar.getInstance().getTime(), currentAcc.getId());
 
             db.databaseWriteExecutor.execute(() -> {
-                Priority priority = new Priority(edtNewName.getText().toString(), Calendar.getInstance().getTime(), currentAcc.getID());
 
-                db.priorityDAO().insert(priority);
+
+                //isDuplicate = true: available this priority in database
+                Boolean isDuplicate = db.priorityDAO().getPriorityByName(namePriority) != null ? false : true;
+
+                if (!isDuplicate) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            edtNewName.setError("This priority is available");
+                            edtNewName.setFocusable(true);
+                        }
+                    });
+
+                }else {
+                    db.priorityDAO().insert(priority);
+                    alertDialog.dismiss();
+                }
             });
-            alertDialog.dismiss();
+
         });
     }
 

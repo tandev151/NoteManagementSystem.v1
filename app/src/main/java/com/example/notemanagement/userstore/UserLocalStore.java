@@ -25,11 +25,11 @@ public class UserLocalStore {
     public void storeUserData(Account user){
         SharedPreferences.Editor editor= userLocalStore.edit();
         //User user1= mrepository.getUserByEmail(user.getEmail());
-        editor.putInt("idUser",user.getID());
+        editor.putInt("idUser",user.getId());
         editor.putString("emailUser", user.getUserName());
         editor.putString("lastnameUser", user.getLastName());
         editor.putString("firstnameUser",user.getFirstName());
-        editor.putString("passwordUser", user.getPassWord());
+        editor.putString("passwordUser", user.getPassword());
         editor.commit();
     }
 

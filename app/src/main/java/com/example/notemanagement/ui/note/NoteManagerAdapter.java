@@ -39,7 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.NoteViewHolder>  {
+public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.NoteViewHolder> {
 
     private List<Note> lNote;
     List<Category> lCategory;
@@ -60,18 +60,20 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
     public List<Note> getlNote() {
         return lNote;
     }
+
     public Context context;
-    public void setlNote(List<Note> lnote){
+
+    public void setlNote(List<Note> lnote) {
         this.lNote = lnote;
     }
 
-    public NoteManagerAdapter(List<Note> list, Context context){
+    public NoteManagerAdapter(List<Note> list, Context context) {
 
         setlNote(list);
         this.context = context;
     }
 
-    public NoteManagerAdapter(ArrayList<Note> listNote, List<Category> lcategory, List<Status> lstatus, Context context){
+    public NoteManagerAdapter(ArrayList<Note> listNote, List<Category> lcategory, List<Status> lstatus, Context context) {
 
         this.lNote = listNote;
         this.lStatus = lstatus;
@@ -81,7 +83,7 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
     private List<Priority> lPriority;
 
-    public NoteManagerAdapter(List<Note> listNote, List<Category> lcategory, List<Status> lstatus, List<Priority> lpriority, Context context){
+    public NoteManagerAdapter(List<Note> listNote, List<Category> lcategory, List<Status> lstatus, List<Priority> lpriority, Context context) {
 
         this.lNote = listNote;
         this.lStatus = lstatus;
@@ -95,33 +97,42 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
     // Tạo viewholder cho class mới tạo
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_note,parent,false);
-        return new NoteViewHolder(view, lNote, lCategory, lStatus,lPriority, context);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_note, parent, false);
+        return new NoteViewHolder(view, lNote, lCategory, lStatus, lPriority, context);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
 
         Note note = getlNote().get(position);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        for(int i = 0; i < lCategory.size();i++){ // tên Category
-            if(lCategory.get(i).getCategoryId() == note.getCategoryId()){holder.tvCategory.setText(lCategory.get(i).getName()); break;}
+
+        for (int i = 0; i < lCategory.size(); i++) { // tên Category
+            if (lCategory.get(i).getCategoryId() == note.getCategoryId()) {
+                holder.tvCategory.setText(lCategory.get(i).getName());
+                break;
+            }
+        }
+        for (int i = 0; i < lStatus.size(); i++) { //tên Status
+            if (lStatus.get(i).getStatusId() == note.getStatusId()) {
+                holder.tvStatus.setText(lStatus.get(i).getName());
+                break;
+            }
         }
 
-        for(int i = 0; i < lStatus.size();i++){ //tên Status
-            if(lStatus.get(i).getStatusId() == note.getStatusId()){holder.tvStatus.setText(lStatus.get(i).getName()); break;}
+        for (int i = 0; i < lPriority.size(); i++) { //Tên Priority
+            if (lPriority.get(i).getPriorityId() == note.getPriorityId()) {
+                holder.tvPriority.setText(lPriority.get(i).getName());
+                break;
+            }
         }
 
-        for(int i = 0; i < lPriority.size();i++){ //Tên Priority
-            if(lPriority.get(i).getPriorityId() == note.getPriorityId()){holder.tvPriority.setText(lPriority.get(i).getName()); break;}
-        }
-
-        if(note.getCreateDate() != null){
+        if (note.getCreateDate() != null) {
             holder.tvCreateDate.setText(dateFormat.format(note.getCreateDate()));
         }
 
-        if(note.getPlanDate() != null){
+        if (note.getPlanDate() != null) {
             holder.tvPlanDate.setText(dateFormat.format(note.getPlanDate()));
         }
 
@@ -135,13 +146,15 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
         return lNote.size();
     }
 
-    public static class NoteViewHolder extends RecyclerView.ViewHolder implements  View.OnCreateContextMenuListener{
+    public static class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
 
         private TextView tvNameNote, tvPriority, tvStatus, tvCategory, tvPlanDate, tvCreateDate;
+
         public TextView getTvNameNote() {
             return tvNameNote;
         }
+
         private List<Status> lStatus;
         private List<Category> lCategory;
         private List<Note> lNoteEdit;
@@ -167,8 +180,8 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(),1,1,"Delete");
-            menu.add(getAdapterPosition(),2,1,"Edit");
+            menu.add(getAdapterPosition(), 1, 1, "Delete");
+            menu.add(getAdapterPosition(), 2, 1, "Edit");
         }
 
         public TextView getTvPriority() {

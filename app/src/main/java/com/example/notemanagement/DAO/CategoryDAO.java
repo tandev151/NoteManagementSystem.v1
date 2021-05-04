@@ -9,6 +9,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.notemanagement.Entity.Category;
+import com.example.notemanagement.Entity.Priority;
 
 import java.util.List;
 
@@ -21,31 +22,26 @@ public interface CategoryDAO {
     @Update (onConflict = OnConflictStrategy.IGNORE)
     void update(Category category);
 
-    @Delete
-    void delete(Category category);
+    @Query("UPDATE Category SET Name= (:nameCategory) WHERE CategoryId= (:categoryId) AND IsDeleted=0")
+    void updateNameCategory(int categoryId, String nameCategory);
 
-    @Query("DELETE FROM category where categoryId = (:idCategory)")
+    @Query("UPDATE CATEGORY SET IsDeleted= 1 where categoryId = (:idCategory)")
     void deleteById(int idCategory);
 
-    @Query("DELETE FROM category")
-    void deleteAll();
-
-    @Query("SELECT * FROM Category WHERE Category.categoryId =:id")
+    @Query("SELECT * FROM Category WHERE Category.categoryId =(:id) AND IsDeleted=0")
     LiveData<Category> getCategory(int id);
 
-    @Query("SELECT * FROM Category WHERE userId = (:idUser)")
-    public LiveData<List<Category>> getCategoryByUser(int idUser);
+    @Query("SELECT * FROM Category WHERE AccountId = (:accountId) AND IsDeleted=0")
+    public LiveData<List<Category>> getCategoryByUser(int accountId);
 
-    @Query("SELECT * FROM Category where Category.userId = :idUser")
-    LiveData<List<Category>> getAllCategory(int idUser);
+    @Query("SELECT * FROM Category where Category.AccountId = (:accountId) AND IsDeleted=0")
+    LiveData<List<Category>> getAllCategory(int accountId);
 
+    @Query("SELECT * FROM Category WHERE Name = (:nameCategory) AND IsDeleted=0")
+    Category getCategoryByName(String nameCategory);
 
-
-    @Query("Select * from Category")
-    List<Category> getAll();
-
-    @Query("SELECT * FROM Category WHERE userId = (:userId)")
-    List<Category> getAllByUserId(int userId);
+    @Query("SELECT * FROM Category WHERE AccountId = (:accountId) AND IsDeleted=0")
+    List<Category> getAllByUserId(int accountId);
 
 
 }

@@ -1,75 +1,91 @@
 package com.example.notemanagement.Entity;
 
 
+import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.notemanagement.Convert;
 
 import java.util.Date;
+import java.util.jar.Attributes;
 
-@Entity(tableName = "Priority")
+@Entity(tableName = "Priority", indices = {@Index(value = {"Name"},unique = true)})
 @TypeConverters(Convert.class)
 public class Priority {
 
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name = "priorityId")
-    private int priorityId;
+    @ColumnInfo(name = "PriorityId")
+    private int PriorityId;
 
-    @ColumnInfo(name = "name")
-    private String name;
+    @ColumnInfo(name = "Name")
+    private String Name;
 
-    @ColumnInfo(name = "createDate")
-    private Date createDate;
+    @TypeConverters(Convert.class)
+    @ColumnInfo(name = "CreateDate")
+    private Date CreateDate;
 
-    @ColumnInfo(name = "userId")
-    @ForeignKey(entity = User.class, parentColumns = "userId", childColumns = "userId", onDelete = ForeignKey.CASCADE)
-    private int userId;
+    @ColumnInfo(name = "AccountId")
+    private int AccountId;
+
+    @ColumnInfo(name = "IsDeleted", defaultValue = "false")
+    private boolean IsDeleted;
+
+    public boolean IsDeleted() {
+        return IsDeleted;
+    }
+
+    public void setIsDeleted(boolean deleted) {
+        IsDeleted = deleted;
+    }
+
+    public int getAccountId() {
+        return AccountId;
+    }
+
+    public void setAccountId(int accountId) {
+        AccountId = accountId;
+    }
 
     public Priority() {
     }
 
-    public Priority(String name, Date createDate, int idUser) {
-        this.name = name;
-        this.createDate = createDate;
-        this.userId = idUser;
+    public Priority(String name, Date createDate, int idAccount) {
+        this.Name = name;
+        this.CreateDate = createDate;
+        this.AccountId = idAccount;
     }
 
     public int getPriorityId() {
-        return priorityId;
+        return PriorityId;
     }
 
-    public int getUserId() {
-        return userId;
-    }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     public void setPriorityId(int priorityId) {
-        this.priorityId = priorityId;
+        this.PriorityId = priorityId;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return CreateDate;
     }
 
     public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+        this.CreateDate = createDate;
     }
 
 

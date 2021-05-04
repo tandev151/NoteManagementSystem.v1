@@ -25,8 +25,8 @@ public interface NoteDAO {
     @Insert
     void createNewNote(Note note);
 
-    @Query("Select * from Account where id = (:UserId)")
-    Account getUserById(int UserId);
+    @Query("Select * from Account where id = (:AccountId)")
+    Account getUserById(int AccountId);
 
     @Query("Select name from Status where statusid = (:StatusId)")
     String getNameStatusById(int StatusId);
@@ -34,27 +34,27 @@ public interface NoteDAO {
 //    @Query("Select Name from Priority where PriorityId = (:PriorityId)")
 //    String getNamePriorityById(int PriorityId);
 
-    @Query("Select name from Category where categoryId = (:CategoryId)")
+    @Query("Select name from Category where CategoryId = (:CategoryId)")
     String getNameCategoryById(int CategoryId);
 
-    @Query("Select * from Category where categoryId = (:CategoryId)")
+    @Query("Select * from Category where CategoryId = (:CategoryId)")
     Category getCategory(int CategoryId);
 
     @Query("Select * from Note")
     List<Note> getAll();
 
-    @Query("Select * from Note where UserId = :UserId")
-    List<Note> getAll(int UserId);
+    @Query("Select * from Note where AccountId = :accountId")
+    List<Note> getAll(int accountId);
 
-    @Query("Select * from Note where UserId = :UserId")
-    LiveData<List<Note>> getAllByUserId(int UserId);
+    @Query("Select * from Note where AccountId = :accountId")
+    LiveData<List<Note>> getAllByUserId(int accountId);
 
     @Query("SELECT Status.name,count(*) from Note,Status " +
-            "WHERE Note.UserId =:UserId and Status.statusId =Note.StatusId GROUP by Status.name")
-    Cursor getNameAndCountNoteByStatus(int UserId);
+            "WHERE Note.AccountId =:accountId and Status.StatusId =Note.StatusId GROUP by Status.Name")
+    Cursor getNameAndCountNoteByStatus(int accountId);
 
-    @Query("Select StatusId,Count(*) from Note where UserId = :UserId group by StatusId")
-    Cursor getCountNoteByStatus(int UserId);
+    @Query("Select StatusId,Count(*) from Note where AccountId = :accountId group by StatusId")
+    Cursor getCountNoteByStatus(int accountId);
     @Delete
     void deleteNote(Note note);
 

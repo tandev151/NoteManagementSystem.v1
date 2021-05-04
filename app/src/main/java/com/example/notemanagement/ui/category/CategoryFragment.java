@@ -1,51 +1,41 @@
 package com.example.notemanagement.ui.category;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.Entity.Category;
-import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
-import com.example.notemanagement.ui.status.StatusAdapter;
-import com.example.notemanagement.ui.status.StatusFragment;
+import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
-import static com.example.notemanagement.Utils.CONSTANT.MY_PREFERENCE_NAME;
+import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
 import static com.example.notemanagement.Utils.CONSTANT.SUCCESS_MESSAGE;
+import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
 
 public class CategoryFragment extends Fragment {
-
-    private int userId;
+    //Init
+    UserLocalStore userLocalStore;
+    Account currentAcc;
 
     private RecyclerView recyclerViewCategory;
     private CategoryAdapter categoryAdapter;
@@ -73,18 +63,21 @@ public class CategoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         categoryAdapter = new CategoryAdapter(requireContext());
 
-        SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
-        editor.putString("user",String.valueOf(1)).commit();
-        //Get user login now
-        SharedPreferences pref= this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        String hashUser = pref.getString("user", null);
-        userId = Integer.valueOf(hashUser);
+        //SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
+        currentAcc = new Account();
+        userLocalStore = new UserLocalStore(requireContext());
+
+
+        if (userLocalStore.getLoginUser() != null) {
+            currentAcc = userLocalStore.getLoginUser();
+        }
+
 
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
         //get elements in the layout
         recyclerViewCategory = (RecyclerView) view.findViewById(R.id.recyclerViewCategory);
         //get observable to list in adapter
-        db.categoryDAO().getCategoryByUser(1).observe(getViewLifecycleOwner(), categories -> {
+        db.categoryDAO().getCategoryByUser(currentAcc.getId()).observe(getViewLifecycleOwner(), categories -> {
             categoryAdapter.setAdapter(categories);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -95,11 +88,10 @@ public class CategoryFragment extends Fragment {
 
         //Get share preference for check
 
-
         //Add event for floating action button
         fptAddCategory = (FloatingActionButton) view.findViewById(R.id.fptAddStatus);
         fptAddCategory.setOnClickListener((View v) -> {
-            addNewStatus(v);
+            addNewCategory(v);
         });
     }
 
@@ -108,7 +100,7 @@ public class CategoryFragment extends Fragment {
         super.onContextItemSelected(item);
 
         switch (item.getItemId()) {
-            case 2: //Update
+            case UPDATE_CODE: //Update
                 //get element was update by index in adapter
                 int position = item.getGroupId();
 
@@ -122,8 +114,7 @@ public class CategoryFragment extends Fragment {
                 AlertDialog alertDialog = builder.create();
                 alertDialog.setCancelable(false);
 
-
-                //Display value of status which updated
+                //Display value of category which updated
                 EditText nameCategory = dialogView.findViewById(R.id.edtDialogName);
                 nameCategory.setText(category.getName());
                 //Title for this dialog
@@ -143,23 +134,48 @@ public class CategoryFragment extends Fragment {
                 saveDialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText nameCategory = alertDialog.findViewById(R.id.edtDialogName);
-                        if (nameCategory.getText().toString().trim() != null) {
+                        String categoryUpdate = nameCategory.getText().toString().trim();
+
+                        if (categoryUpdate != null) {
+
+
+                            // EditText nameCategory = v.findViewById(R.id.edtDialogName);
                             category.setName(nameCategory.getText().toString());
                             //New thread for work with database
                             db.databaseWriteExecutor.execute(() -> {
-                                db.categoryDAO().update(category);
+                                Boolean isDuplicated = db.categoryDAO().getCategoryByName(categoryUpdate) != null ? false : true;
+                                if (isDuplicated) {
+                                    db.categoryDAO().updateNameCategory(category.getCategoryId(), categoryUpdate);
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getActivity().getApplicationContext(), "Success update Priority", Toast.LENGTH_LONG);
+                                            alertDialog.dismiss();
+                                        }
+                                    });
+
+                                } else {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            nameCategory.setError("This Category is available!!!");
+                                            nameCategory.setFocusable(true);
+                                        }
+                                    });
+
+                                }
+
                             });
                         }
-                        Toast.makeText(getActivity().getApplicationContext(), "Success create category", Toast.LENGTH_LONG);
-                        alertDialog.dismiss();
                     }
                 });
+                if (getActivity() != null && !getActivity().isFinishing()) {
+                    alertDialog.show();
 
-                alertDialog.show();
+                }
                 break;
 
-            case 1:
+            case DELETE_CODE:
                 //get true id
                 int positionDelete = item.getGroupId();
                 int mappingPositionInList = categoryAdapter.getList().get(positionDelete).getCategoryId();
@@ -167,24 +183,32 @@ public class CategoryFragment extends Fragment {
                 //new thread for work with database
                 db.databaseWriteExecutor.execute(() -> {
                     db.categoryDAO().deleteById(mappingPositionInList);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Notify that action done!!!
+                            Snackbar.make(root, SUCCESS_MESSAGE, Snackbar.LENGTH_LONG)
+                                    .setAction("Ok", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
                 });
-                //Notify that action done!!!
-                Snackbar.make(root, SUCCESS_MESSAGE, Snackbar.LENGTH_LONG)
-                        .setAction("Ok", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                            }
-                        })
-                        .show();
+
+
         }
         return true;
     }
 
     /**
-     * Create new status
+     * Create new Category
+     *
      * @param v
      */
-    public void addNewStatus(View v) {
+    public void addNewCategory(View v) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         ViewGroup viewGroup = (ViewGroup) root.findViewById(android.R.id.content);
@@ -201,23 +225,39 @@ public class CategoryFragment extends Fragment {
             alertDialog.dismiss();
         });
 
-        TextView tvCategryName = alertDialog.findViewById(R.id.tvDialogTitle);
+        TextView tvCategoryName = alertDialog.findViewById(R.id.tvDialogTitle);
+        tvCategoryName.setText("Category form");
         EditText edtNewName = alertDialog.findViewById(R.id.edtDialogName);
 
         Button btnAdd = (Button) dialogView.findViewById(R.id.btnEdit);
         btnAdd.setOnClickListener((View addView) -> {
 
             if (edtNewName.getText().toString().trim().isEmpty()) {
-                tvCategryName.setError("Please enter the category' name!");
+                edtNewName.setError("Please enter the category' name!");
                 return;
             }
+            String nameCategory = edtNewName.getText().toString().trim();
+            Category category = new Category(nameCategory, Calendar.getInstance().getTime(), currentAcc.getId());
 
             db.databaseWriteExecutor.execute(() -> {
-                Category category = new Category(edtNewName.getText().toString(), Calendar.getInstance().getTime(), userId);
 
-                db.categoryDAO().insert(category);
+                //isDuplicate = true: available this priority in database
+                Boolean isDuplicate = db.categoryDAO().getCategoryByName(nameCategory) != null ? false : true;
+
+                if (!isDuplicate) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            edtNewName.setError("This category is available");
+                            edtNewName.setFocusable(true);
+                        }
+                    });
+
+                } else {
+                    db.categoryDAO().insert(category);
+                    alertDialog.dismiss();
+                }
             });
-            alertDialog.dismiss();
         });
     }
 }

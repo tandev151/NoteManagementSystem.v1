@@ -18,6 +18,8 @@ import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.userstore.UserLocalStore;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -84,7 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
                                     context.startActivity(mainActivity);
-                                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    mainActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 }
                             });
 

@@ -19,60 +19,74 @@ import java.util.Date;
 @Entity(tableName = "Category")
 public class Category {
     @PrimaryKey (autoGenerate = true)
-    @ColumnInfo(name = "categoryId")
-    private int categoryId;
+    @ColumnInfo(name = "CategoryId")
+    private int CategoryId;
+
+    @ColumnInfo(name = "Name")
+    private String Name;
+
+    @TypeConverters(Convert.class)
+    @ColumnInfo(name = "CreateDate", defaultValue = "CURRENT_TIMESTAMP")
+    private Date CreateDate;
+
+    @ColumnInfo(name = "AccountId")
+    private int AccountId;
+    public Category(){
+
+    }
+
+    @ColumnInfo(name = "IsDeleted", defaultValue = "false")
+    private boolean IsDeleted;
+
+    public void setDeleted(boolean deleted) {
+        IsDeleted = deleted;
+    }
+
+    public boolean IsDeleted() {
+        return IsDeleted;
+    }
+
+    public void setIsDeleted(boolean deleteD) {
+        IsDeleted = deleteD;
+    }
+
+    public Category(String name, Date createDate, int accountId) {
+        this.Name = name;
+        this.CreateDate = createDate;
+        this.AccountId = accountId;
+
+    }
+
+    public int getCategoryId() {
+        return CategoryId;
+    }
 
     public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+        CategoryId = categoryId;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        Name = name;
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return CreateDate;
     }
-
 
     public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+        CreateDate = createDate;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getAccountId() {
+        return AccountId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    @ColumnInfo(name = "name")
-    private String name;
-
-    @TypeConverters(Convert.class)
-    @ColumnInfo(name = "createDate", defaultValue = "CURRENT_TIMESTAMP")
-    private Date createDate;
-
-    @ColumnInfo(name = "userId")
-    @ForeignKey(entity = User.class, parentColumns = "userId", childColumns = "userId", onDelete = ForeignKey.CASCADE)
-    private int userId;
-
-
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public Category(String name, Date createDate, int userId) {
-        this.name = name;
-        this.createDate = createDate;
-        this.userId = userId;
-
+    public void setAccountId(int accountId) {
+        AccountId = accountId;
     }
 
     @NonNull

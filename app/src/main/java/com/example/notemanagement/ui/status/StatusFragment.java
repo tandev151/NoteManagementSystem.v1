@@ -2,7 +2,6 @@ package com.example.notemanagement.ui.status;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,13 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.notemanagement.Entity.Account;
+import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
@@ -38,13 +32,12 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
 
-import static com.example.notemanagement.Utils.CONSTANT.MY_PREFERENCE_NAME;
+import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
 import static com.example.notemanagement.Utils.CONSTANT.SAVE;
 import static com.example.notemanagement.Utils.CONSTANT.SUCCESS_MESSAGE;
 import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
 
 public class StatusFragment extends Fragment {
-    private int userId;
 
     private RecyclerView recyclerViewStatus;
     private StatusAdapter statusAdapter;
@@ -52,8 +45,7 @@ public class StatusFragment extends Fragment {
     View root;
     UserLocalStore userLocalStore;
     Context context;
-    Account currentUser;
-
+    Account currentAcc;
     //get database
     RoomDB db;
 
@@ -77,16 +69,13 @@ public class StatusFragment extends Fragment {
         statusAdapter = new StatusAdapter(requireContext());
 
         //SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
-        currentUser = new Account();
-
+        currentAcc = new Account();
         userLocalStore = new UserLocalStore(requireContext());
 
 
-            if (userLocalStore.getLoginUser()!=null)
-            {
-                currentUser= userLocalStore.getLoginUser();
-                this.userId= currentUser.getID();
-            }
+        if (userLocalStore.getLoginUser() != null) {
+            currentAcc = userLocalStore.getLoginUser();
+        }
 
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
         //get elements in the layout
@@ -94,14 +83,11 @@ public class StatusFragment extends Fragment {
         //get observable to list in adapter
 
 
-
-
-
         ////
         /////thêm userid /accountid
         /////
         /////
-        db.statusDAO().getStatusByAccountId(userId).observe(getViewLifecycleOwner(), status -> {
+        db.statusDAO().getStatusByAccountId(currentAcc.getId()).observe(getViewLifecycleOwner(), status -> {
             statusAdapter.setAdapter(status);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -109,7 +95,7 @@ public class StatusFragment extends Fragment {
 
             recyclerViewStatus.setLayoutManager(layoutManager);
             recyclerViewStatus.setAdapter(statusAdapter);
-            Log.d("lll", "onViewCreated: ");
+
         });
 
         //Get share preference for check
@@ -159,22 +145,48 @@ public class StatusFragment extends Fragment {
                 saveDialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText nameCategory = dialogView.findViewById(R.id.edtDialogName);
-                        if (nameCategory.getText().toString().trim() != null) {
+                        String statusUpdate = nameCategory.getText().toString().trim();
+
+                        if (statusUpdate != null) {
+
+
+                            // EditText nameCategory = v.findViewById(R.id.edtDialogName);
                             status.setName(nameCategory.getText().toString());
                             //New thread for work with database
                             db.databaseWriteExecutor.execute(() -> {
-                                db.statusDAO().update(status);
+                                Boolean isDuplicated = db.statusDAO().getStatusByNameDuplicate(statusUpdate) != null ? false : true;
+                                if (isDuplicated) {
+                                    db.statusDAO().updateNameStatus(status.getStatusId(), statusUpdate);
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getActivity().getApplicationContext(), "Success update Status", Toast.LENGTH_LONG);
+                                            alertDialog.dismiss();
+                                        }
+                                    });
+
+                                } else {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            nameCategory.setError("This status is available!!!");
+                                            nameCategory.setFocusable(true);
+                                        }
+                                    });
+
+                                }
+
                             });
                         }
-                        Toast.makeText(getActivity().getApplicationContext(), SUCCESS_MESSAGE, Toast.LENGTH_LONG);
-                        alertDialog.dismiss();
                     }
                 });
-                alertDialog.show();
+                if (getActivity() != null && !getActivity().isFinishing()) {
+                    alertDialog.show();
+
+                }
                 break;
 
-            case 1:
+            case DELETE_CODE:
                 //get true id
                 int positionDelete = item.getGroupId();
                 int mappingPositionInList = statusAdapter.getList().get(positionDelete).getStatusId();
@@ -197,6 +209,7 @@ public class StatusFragment extends Fragment {
 
     /**
      * Create new status
+     *
      * @param v
      */
     public void addNewStatus(View v) {
@@ -224,15 +237,32 @@ public class StatusFragment extends Fragment {
         btnAdd.setOnClickListener((View addView) -> {
 
             if (edtNewName.getText().toString().trim().isEmpty()) {
-                tvStatusName.setError("Please enter the status' name!");
+                edtNewName.setError("Please enter the status' name!");
                 return;
             }
 
+            String nameStatus = edtNewName.getText().toString().trim();
+            Status status = new Status(nameStatus, Calendar.getInstance().getTime(), currentAcc.getId());
+
             db.databaseWriteExecutor.execute(() -> {
-                Status status = new Status(edtNewName.getText().toString(), Calendar.getInstance().getTime(), userId);
-                db.statusDAO().insert(status);
+
+                //isDuplicate = true: available this priority in database
+                Boolean isDuplicate = db.statusDAO().getStatusByNameDuplicate(nameStatus) != null ? false : true;
+
+                if (!isDuplicate) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            edtNewName.setError("This status is available");
+                            edtNewName.setFocusable(true);
+                        }
+                    });
+
+                } else {
+                    db.statusDAO().insert(status);
+                    alertDialog.dismiss();
+                }
             });
-            alertDialog.dismiss();
         });
     }
 }
