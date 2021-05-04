@@ -6,7 +6,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.notemanagement.Entity.Chart;
 import com.example.notemanagement.Entity.Status;
 
 import java.util.List;
@@ -18,9 +17,6 @@ public interface StatusDAO {
 
     @Update
     void update(Status status);
-
-    @Query("UPDATE Status SET IsDeleted = 1 where Name=:statusName ")
-    void deleteStatusByName (String statusName);
 
     @Query("UPDATE Status SET IsDeleted=1 where statusId=:statusId ")
     void deleteStatusById(int statusId);
@@ -34,14 +30,8 @@ public interface StatusDAO {
     @Query("SELECT * FROM Status WHERE AccountId = (:accountId) AND IsDeleted=0")
     LiveData<List<Status>> getStatusByAccountId(int accountId);
 
-//    @Query("SELECT statusId, count(NoteId) as amount FROM Note WHERE userId = (:idUser) group by statusID ")
-//    List<Chart> getStatusNoteById(int idUser);
-
     @Query("UPDATE Status SET Name= (:nameStatus) WHERE StatusId= (:statusId) AND IsDeleted=0")
     void updateNameStatus(int statusId, String nameStatus);
-
-    @Query("SELECT * FROM Status where Name = (:name) AND IsDeleted=0")
-    LiveData<List<Status>> getStatusByName(String name);
 
     @Query(("SELECT * FROM Status WHERE Name= (:nameStatus) AND IsDeleted=0"))
     Status getStatusByNameDuplicate(String nameStatus);

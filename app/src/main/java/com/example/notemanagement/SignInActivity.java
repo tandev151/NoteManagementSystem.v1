@@ -72,11 +72,10 @@ public class SignInActivity extends AppCompatActivity {
                 String password = edtPassWord.getText().toString();
 
                 if(username.isEmpty() || password.isEmpty()){
-                    createDialog("Bạn chưa điền tên đăng nhập hay mật khẩu","Thông báo");
+                    createDialog("You must enter your email and password","Notification");
                 }
                 else
                 {
-                    //      Account account = new Account(username,password);
                     RoomDB roomDB = RoomDB.getDatabase(getApplicationContext());
                     accountDAO = roomDB.accountDAO();
                     RoomDB.databaseWriteExecutor.execute(()->{
@@ -87,7 +86,7 @@ public class SignInActivity extends AppCompatActivity {
                         if (checkuser == null) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Email đăng nhập sai", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Email was incorrect", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -104,7 +103,7 @@ public class SignInActivity extends AppCompatActivity {
                             //Announce on screen that success
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Sign In successfully", Toast.LENGTH_SHORT).show();
 
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
                                     context.startActivity(mainActivity);
@@ -114,7 +113,7 @@ public class SignInActivity extends AppCompatActivity {
                         else {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Mật khẩu sai", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Password was incorrect", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

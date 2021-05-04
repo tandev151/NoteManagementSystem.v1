@@ -1,9 +1,12 @@
 package com.example.notemanagement.ui.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.icu.number.Precision;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +20,16 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 
 
+import com.example.notemanagement.Entity.PointChart;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
 import com.example.notemanagement.userstore.UserLocalStore;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -34,6 +41,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
@@ -43,121 +51,95 @@ import javax.sql.DataSource;
 public class HomeFragment extends Fragment {
     private RoomDB roomDB;
 
-    private  Context context;
+    private Context context;
     private UserLocalStore userLocalStore;
 
     public static int userIdCurrent;
 
+    private ArrayList<PointChart> data;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
-         PieChart pieChart = root.findViewById(R.id.piechartDashBoard);
-         context= root.getContext();
-        userLocalStore= new UserLocalStore(context);
-        if (userLocalStore.getLoginUser()!=null)
-        {
+
+        PieChart pieChart = root.findViewById(R.id.piechartDashBoard);
+        context = root.getContext();
+        userLocalStore = new UserLocalStore(context);
+
+        data = new ArrayList<PointChart>();
+        if (userLocalStore.getLoginUser() != null) {
             userIdCurrent = userLocalStore.getLoginUser().getId();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                   setUpPieChart(pieChart);
+                    setUpPieChart(pieChart);
                 }
-
             }).start();
-
         }
-
-
-//        pieChart.setOnChartValueSelectedListener((OnChartValueSelectedListener) this);
-
         return root;
     }
 
-    public void setUpPieChart(PieChart pieChart){
+    public void setUpPieChart(PieChart pieChart) {
         pieChart.setDrawCenterText(true);
-       // pieChart.setEntryLabelTextSize(9);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setRotationEnabled(true);//  Cho phép xoay Pie Chart
+        pieChart.setEntryLabelTextSize(12);
+        pieChart.setEntryLabelColor(Color.WHITE);
+        //Permit rotate
+        pieChart.setRotationEnabled(true);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setHoleRadius(1);//Tạo vòng tròn ở tâm
+        //Hole center
+        pieChart.setHoleRadius(0);
         pieChart.setTransparentCircleAlpha(0);
-//        pieChart.setCenterText("Statistics");//Tạo text cho vòng tròn ở tâm
-        pieChart.setCenterTextSize(10);
-       // pieChart.setDrawEntryLabels(false);
-
+        //Hidden legend of default Pie chart
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(false);
+        //Add data
         addDataSet(pieChart);
     }
 
-    private  void addDataSet(PieChart pieChart) {
-
-
-//        RoomDB.databaseWriteExecutor.execute(()->{
-//            statusDAO= RoomDB.getDatabase(context).statusDAO();
-//             chartInfo= statusDAO.getStatusNoteById(currentAcc.getID());
-//        });
+    private void addDataSet(PieChart pieChart) {
 
         ArrayList<PieEntry> value = new ArrayList<>();
-        Cursor cursor =  roomDB.getDatabase(context).noteDAO().getNameAndCountNoteByStatus(userIdCurrent);
-//        LiveData<List<Status>>[] xData = {RoomDB.getDatabase(context).statusDAO().getStatusByAccountId(userIdCurrent)};
-
-        for (int i = 0; i<cursor.getCount(); i++)
-        {
-           cursor.moveToNext();
-           value.add(new PieEntry(cursor.getFloat(1),cursor.getString(0)));
-
+        Cursor cursor = roomDB.getDatabase(context).noteDAO().getNameAndCountNoteByStatus(userIdCurrent);
+        //Sum for calculate percent
+        int sumNote = 0;
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToNext();
+            //Set locate for value
+            int countNote = cursor.getInt(1);
+            String nameType = cursor.getString(0);
+            sumNote += countNote;
+            PointChart chart = new PointChart(countNote, nameType);
+            data.add(chart);
+        }
+        int len = data.size() - 1;
+        //Round result
+        DecimalFormat twoDot = new DecimalFormat("#.##");
+        for (int i = 0; i <= len; i++) {
+            Float percent = Float.valueOf(twoDot.format((float) (data.get(i).getCountNote()) / sumNote));
+            //Add value for chart
+            value.add(new PieEntry(percent, data.get(i).getStatus() + ": " + String.valueOf(percent * 100) + "%"));
         }
 
-
-//
-//
-//
-//        for (int i = 0; i < xData.length;i++) {
-//            label.add(xData[i]);
-//        }
-
-//        for (int i = 0; i < yData.length;i++){
-//            value.add(new PieEntry(yData[i],xData[i]));
-//        }
-
-        PieDataSet pieDataSet=new PieDataSet(value,"Statisfics");
-
-        pieDataSet.setSliceSpace(2);//Đặt khoảng trống ở giữa các lát cắt
-        pieDataSet.setValueTextSize(9);
-        pieDataSet.setValueTextColor(Color.WHITE);
-        ArrayList<Integer> colors=new ArrayList<>();
+        PieDataSet pieDataSet = new PieDataSet(value, "Statistics");
+        //Space between each slice
+        pieDataSet.setSliceSpace(2);
+        //Hidden default percent
+        pieDataSet.setValueTextColor(Color.TRANSPARENT);
+        //Add color
+        ArrayList<Integer> colors = new ArrayList<>();
         colors.add(Color.GRAY);
         colors.add(Color.RED);
         colors.add(Color.BLUE);
-
-        for (int color: ColorTemplate.MATERIAL_COLORS) {
+        //More color
+        for (int color : ColorTemplate.MATERIAL_COLORS) {
             colors.add(color);
         }
 
-
         pieDataSet.setColors(colors);
 
-      Legend legend=pieChart.getLegend();
-      legend.setEnabled(false);
-//        legend.setForm(Legend.LegendForm.CIRCLE);
-//        legend.setPosition(Legend.LegendPosition.LEFT_OF_CHART);
-
-        pieDataSet.setValueFormatter(new IValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return String.valueOf(value)+" ";
-            }
-        });
-
-
-        PieData pieData=new PieData(pieDataSet);
-        pieData.setDrawValues(true);
-
-        pieData.setValueTextSize(9f);
-        pieData.setValueTextColor(Color.BLACK);
-
+        PieData pieData = new PieData(pieDataSet);
 
         pieChart.setData(pieData);
         pieChart.invalidate();

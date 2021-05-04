@@ -48,7 +48,6 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
         root = inflater.inflate(R.layout.fragment_category, container, false);
         return root;
     }
@@ -63,15 +62,12 @@ public class CategoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         categoryAdapter = new CategoryAdapter(requireContext());
 
-        //SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
         currentAcc = new Account();
         userLocalStore = new UserLocalStore(requireContext());
-
 
         if (userLocalStore.getLoginUser() != null) {
             currentAcc = userLocalStore.getLoginUser();
         }
-
 
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
         //get elements in the layout
@@ -85,8 +81,6 @@ public class CategoryFragment extends Fragment {
             recyclerViewCategory.setAdapter(categoryAdapter);
             recyclerViewCategory.setLayoutManager(layoutManager);
         });
-
-        //Get share preference for check
 
         //Add event for floating action button
         fptAddCategory = (FloatingActionButton) view.findViewById(R.id.fptAddStatus);
@@ -137,8 +131,6 @@ public class CategoryFragment extends Fragment {
                         String categoryUpdate = nameCategory.getText().toString().trim();
 
                         if (categoryUpdate != null) {
-
-
                             // EditText nameCategory = v.findViewById(R.id.edtDialogName);
                             category.setName(nameCategory.getText().toString());
                             //New thread for work with database
@@ -153,7 +145,6 @@ public class CategoryFragment extends Fragment {
                                             alertDialog.dismiss();
                                         }
                                     });
-
                                 } else {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
@@ -162,16 +153,13 @@ public class CategoryFragment extends Fragment {
                                             nameCategory.setFocusable(true);
                                         }
                                     });
-
                                 }
-
                             });
                         }
                     }
                 });
                 if (getActivity() != null && !getActivity().isFinishing()) {
                     alertDialog.show();
-
                 }
                 break;
 
@@ -197,8 +185,6 @@ public class CategoryFragment extends Fragment {
                         }
                     });
                 });
-
-
         }
         return true;
     }
@@ -240,10 +226,8 @@ public class CategoryFragment extends Fragment {
             Category category = new Category(nameCategory, Calendar.getInstance().getTime(), currentAcc.getId());
 
             db.databaseWriteExecutor.execute(() -> {
-
                 //isDuplicate = true: available this priority in database
                 Boolean isDuplicate = db.categoryDAO().getCategoryByName(nameCategory) != null ? false : true;
-
                 if (!isDuplicate) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -252,7 +236,6 @@ public class CategoryFragment extends Fragment {
                             edtNewName.setFocusable(true);
                         }
                     });
-
                 } else {
                     db.categoryDAO().insert(category);
                     alertDialog.dismiss();

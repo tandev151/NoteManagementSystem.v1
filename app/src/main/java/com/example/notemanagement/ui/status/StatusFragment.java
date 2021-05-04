@@ -72,7 +72,6 @@ public class StatusFragment extends Fragment {
         currentAcc = new Account();
         userLocalStore = new UserLocalStore(requireContext());
 
-
         if (userLocalStore.getLoginUser() != null) {
             currentAcc = userLocalStore.getLoginUser();
         }
@@ -80,25 +79,17 @@ public class StatusFragment extends Fragment {
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
         //get elements in the layout
         recyclerViewStatus = (RecyclerView) view.findViewById(R.id.recyclStatusList);
+
         //get observable to list in adapter
-
-
-        ////
-        /////thêm userid /accountid
-        /////
-        /////
         db.statusDAO().getStatusByAccountId(currentAcc.getId()).observe(getViewLifecycleOwner(), status -> {
             statusAdapter.setAdapter(status);
             //Constrain when display
             LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
 
-
             recyclerViewStatus.setLayoutManager(layoutManager);
             recyclerViewStatus.setAdapter(statusAdapter);
 
         });
-
-        //Get share preference for check
 
         //Add event for floating action button
         fptAddStatus = (FloatingActionButton) view.findViewById(R.id.fptAddStatus);
@@ -148,8 +139,6 @@ public class StatusFragment extends Fragment {
                         String statusUpdate = nameCategory.getText().toString().trim();
 
                         if (statusUpdate != null) {
-
-
                             // EditText nameCategory = v.findViewById(R.id.edtDialogName);
                             status.setName(nameCategory.getText().toString());
                             //New thread for work with database
@@ -164,7 +153,6 @@ public class StatusFragment extends Fragment {
                                             alertDialog.dismiss();
                                         }
                                     });
-
                                 } else {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
@@ -173,16 +161,13 @@ public class StatusFragment extends Fragment {
                                             nameCategory.setFocusable(true);
                                         }
                                     });
-
                                 }
-
                             });
                         }
                     }
                 });
                 if (getActivity() != null && !getActivity().isFinishing()) {
                     alertDialog.show();
-
                 }
                 break;
 
@@ -245,10 +230,8 @@ public class StatusFragment extends Fragment {
             Status status = new Status(nameStatus, Calendar.getInstance().getTime(), currentAcc.getId());
 
             db.databaseWriteExecutor.execute(() -> {
-
                 //isDuplicate = true: available this priority in database
                 Boolean isDuplicate = db.statusDAO().getStatusByNameDuplicate(nameStatus) != null ? false : true;
-
                 if (!isDuplicate) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override

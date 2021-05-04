@@ -7,7 +7,9 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PatternMatcher;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,9 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-
-//                                    Toast.makeText(getApplicationContext(), "Đăng kí thành công", Toast.LENGTH_SHORT).show();
-                                    createDialog("Đăng ký tài khoản thành công","Thông báo");
+                                    createDialog("Successfully create your register!!!","Notification");
 
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
                                     context.startActivity(mainActivity);
@@ -96,31 +96,12 @@ public class SignUpActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-//                                    Toast.makeText(getApplicationContext(), "Email đã tồn tại", Toast.LENGTH_LONG).show();
-                                    createDialog("Email đã tồn tại","Thông báo");
+                                    createDialog("Email already exists","Notification");
                                 }
                             });
 
                         }
                     });
-                    //****
-                  /*  Account account = new Account();
-                    account.setUserName(username);
-                    account.setPassWord(password);
-                    RoomDB roomDB = RoomDB.getDatabase(getApplicationContext());
-                    AccountDAO accountDAO = roomDB.accountDAO();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            accountDAO.register(username,password);
-                        }
-                    }).start();
-
-
-                    createDialog("Đăng ký tài khoản thành công","Thông báo");
-                    edtUserName.setText("");
-                    edtPass.setText("");
-                    edtConfirmPass.setText("");*/
                 }
 
             }
@@ -138,11 +119,16 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private boolean checkInput(){
+        String email= edtUserName.getText().toString().trim();
         int usersize = edtUserName.getText().length();
         int passsize = edtPass.getText().length();
         if(usersize < 5 && passsize <5)
         {
-            createDialog("Độ dài tên đăng nhập hoặc mật khẩu chưa đủ","Thông báo");
+            createDialog("Username or password must be longer than 6","Notification");
+            return false;
+        }
+        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            createDialog("Email invalid","Notification");
             return false;
         }
         else {
@@ -150,7 +136,7 @@ public class SignUpActivity extends AppCompatActivity {
             String password = edtPass.getText().toString();
             String confirmpass = edtConfirmPass.getText().toString();
             if (!TextUtils.equals(password, confirmpass)) {
-                createDialog("Mật khẩu không trùng khớp", "Thông báo");
+                createDialog("Password is not match", "Notification");
                 return false;
             }
         }

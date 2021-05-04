@@ -29,15 +29,6 @@ public interface PriorityDAO {
     @Query("UPDATE Priority SET IsDeleted=1 where PriorityId=:priorityId ")
     void deletePriorityById(int priorityId);
 
-    @Query("UPDATE Priority SET IsDeleted=1")
-    void deleteAll();
-
-    @Query("SELECT * FROM priority WHERE IsDeleted=0")
-    LiveData<List<Priority>> getAll();
-
-    @Query("SELECT * FROM priority WHERE IsDeleted=0")
-    List<Priority> getAllList();
-
     @Query("SELECT * FROM priority WHERE AccountId = (:accountId) AND IsDeleted=0")
     List<Priority> getAllByUserId(int accountId);
 

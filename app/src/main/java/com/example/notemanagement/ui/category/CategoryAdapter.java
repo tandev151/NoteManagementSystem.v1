@@ -72,14 +72,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        // Nạp layout cho View biểu diễn phần tử sinh viên
         View statusView =
                 inflater.inflate(R.layout.status_item, parent, false);
 
         CategoryAdapter.ViewHolder viewHolder = new ViewHolder(statusView, categoryList, context);
         return viewHolder;
     }
-
     /*
     class is used to assign data for view holder
      */
@@ -93,7 +91,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         holder.tvCreateDate.setText(dateFormat.format(category.getCreateDate()));
     }
-
     @Override
     public int getItemCount() {
         if(categoryList !=null)

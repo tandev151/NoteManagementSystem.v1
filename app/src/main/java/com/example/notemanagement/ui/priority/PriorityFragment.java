@@ -67,7 +67,6 @@ public class PriorityFragment extends Fragment {
         userLocalStore = new UserLocalStore(requireContext());
         if (userLocalStore.getLoginUser() != null) {
             currentAcc = userLocalStore.getLoginUser();
-
         }
 
         db = RoomDB.getDatabase(getActivity().getApplicationContext());
@@ -112,7 +111,6 @@ public class PriorityFragment extends Fragment {
                 AlertDialog alertDialog = builder.create();
                 alertDialog.setCancelable(false);
 
-
                 //Display value of status which updated
                 EditText nameCategory = dialogView.findViewById(R.id.edtDialogName);
                 nameCategory.setText(priority.getName());
@@ -136,8 +134,6 @@ public class PriorityFragment extends Fragment {
                         String priorityUpdate = nameCategory.getText().toString().trim();
 
                         if (priorityUpdate != null) {
-
-
                             // EditText nameCategory = v.findViewById(R.id.edtDialogName);
                             priority.setName(nameCategory.getText().toString());
                             //New thread for work with database
@@ -152,7 +148,6 @@ public class PriorityFragment extends Fragment {
                                             alertDialog.dismiss();
                                         }
                                     });
-
                                 } else {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
@@ -161,16 +156,13 @@ public class PriorityFragment extends Fragment {
                                             nameCategory.setFocusable(true);
                                         }
                                     });
-
                                 }
-
                             });
                         }
                     }
                 });
-                if(getActivity() != null  && !getActivity().isFinishing()){
+                if (getActivity() != null && !getActivity().isFinishing()) {
                     alertDialog.show();
-
                 }
                 break;
 
@@ -232,11 +224,8 @@ public class PriorityFragment extends Fragment {
             Priority priority = new Priority(namePriority, Calendar.getInstance().getTime(), currentAcc.getId());
 
             db.databaseWriteExecutor.execute(() -> {
-
-
                 //isDuplicate = true: available this priority in database
                 Boolean isDuplicate = db.priorityDAO().getPriorityByName(namePriority) != null ? false : true;
-
                 if (!isDuplicate) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -245,14 +234,11 @@ public class PriorityFragment extends Fragment {
                             edtNewName.setFocusable(true);
                         }
                     });
-
-                }else {
+                } else {
                     db.priorityDAO().insert(priority);
                     alertDialog.dismiss();
                 }
             });
-
         });
     }
-
 }
