@@ -36,14 +36,14 @@ import java.util.Date;
 //                ),
 //
 //        @ForeignKey
-//                (entity = User.class,
-//                        parentColumns = "UserId",
-//                        childColumns = "UserId"
+//                (entity = Account.class,
+//                        parentColumns = "AccountId",
+//                        childColumns = "AccountId"
 //
 //                )
 //}
 //)
-//
+
 
 public class Note {
 
@@ -73,6 +73,17 @@ public class Note {
 
     @ColumnInfo(name = "AccountId")
     Integer AccountId;
+
+    @ColumnInfo(name = "IsDeleted", defaultValue = "false")
+    private boolean IsDeleted;
+
+    public boolean getIsDeleted() {
+        return IsDeleted;
+    }
+
+    public void setIsDeleted(boolean deleted) {
+        IsDeleted = deleted;
+    }
 
     public Integer getAccountId() {     return AccountId;  }
 

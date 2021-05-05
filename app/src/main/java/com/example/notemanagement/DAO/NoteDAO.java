@@ -40,13 +40,13 @@ public interface NoteDAO {
     @Query("Select * from Category where CategoryId = (:CategoryId)")
     Category getCategory(int CategoryId);
 
-    @Query("Select * from Note")
+    @Query("Select * from Note where IsDeleted = 0")
     List<Note> getAll();
 
-    @Query("Select * from Note where AccountId = :accountId")
+    @Query("Select * from Note where AccountId = :accountId and IsDeleted = 0")
     List<Note> getAll(int accountId);
 
-    @Query("Select * from Note where AccountId = :accountId")
+    @Query("Select * from Note where AccountId = :accountId and IsDeleted = 0")
     LiveData<List<Note>> getAllByUserId(int accountId);
 
     @Query("SELECT Status.name,count(*) from Note,Status " +
@@ -61,6 +61,8 @@ public interface NoteDAO {
     @Update
     void update(Note note);
 
+    @Query("UPDATE note SET IsDeleted= 1 where NoteId = (:noteId)")
+    void deleteById(int noteId);
 
 //    @Query("Update Note set Name = :Name, CategoryId = :CategoryId, PriorityId = :PriorityId, StatusId =:StatusId," +
 //            "PlanDate = :PlanDate, CreateDate =:CreateDate where NoteId = :NoteId")

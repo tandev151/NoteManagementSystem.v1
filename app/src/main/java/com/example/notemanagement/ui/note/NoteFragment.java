@@ -114,14 +114,14 @@ public class NoteFragment extends Fragment {
         });
 
 
-        if (userLocalStore.getLoginUser() != null) // Kiểm tra nếu có sự đăng nhập của user thì mới thực hiện load dữ liệu
+        if (userLocalStore.getLoginUser() != null) // check login user
         {
             createDatabaseNote();
             userIdCurrent = userLocalStore.getLoginUser().getId();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    loadListSpinner(userIdCurrent); // danh sách của các thuộc tính khi muốn tạo một note mới
+                    loadListSpinner(userIdCurrent); // list of new note
                 }
             }).start();
 
@@ -150,7 +150,7 @@ public class NoteFragment extends Fragment {
 
     }
 
-    private void loadListSpinner(int userId) { // Lấy các danh sách
+    private void loadListSpinner(int userId) { // get all list for spinner
         lStatus = statusDAO.getAllByUserId(userId);
         lCategory = categoryDAO.getAllByUserId(userId);
         lPriority = priorityDAO.getAllByUserId(userId);
@@ -172,7 +172,7 @@ public class NoteFragment extends Fragment {
                 int indexDelete = item.getGroupId();
                 Note note = noteManagerAdapter.getlNote().get(indexDelete);
                 noteDB.databaseWriteExecutor.execute(() -> {
-                    noteDAO.deleteNote(note);
+                    noteDAO.deleteById(note.getNoteId());
                 });
 
         }
@@ -192,13 +192,8 @@ public class NoteFragment extends Fragment {
         vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note, null, false);
         initializationComponentForViewCreateNewNote();
         builder.setView(vCreateNewNote);
-        Note noteTemp = new Note(); // để set giá trị của plandate
         setSpinnerSelect(note);
-
-
         edtNameNote.setText(note.getName());
-
-        Calendar cal = Calendar.getInstance();
         DateFormat formater = new SimpleDateFormat("E, MMM dd yyyy");
 
         if (note.getPlanDate() != null)
@@ -274,11 +269,9 @@ public class NoteFragment extends Fragment {
     }
 
     public void createNewNoteByBtn() {
-        Date planDate = null;
         Context context = new ContextThemeWrapper(getContext(), R.style.AlertDialogTheme);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setOnDismissListener(null);
-        //MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme);
         LayoutInflater layoutInflater = this.getLayoutInflater();
         vCreateNewNote = layoutInflater.inflate(R.layout.create_new_note, null, false);
         initializationComponentForViewCreateNewNote();
@@ -293,10 +286,6 @@ public class NoteFragment extends Fragment {
         setBtnPlanDate();
 
         builder.setCancelable(false);
-
-        //End Button
-        Date finalPlanDate = planDate;
-
         builder.setPositiveButton("Add", (dialog, which) -> {
 
             //Validate plan date
@@ -315,7 +304,6 @@ public class NoteFragment extends Fragment {
             }
 
             note.setName(edtNameNote.getText().toString());
-
             note.setAccountId(userIdCurrent);
             note.setCreateDate(Calendar.getInstance().getTime());
             note.setPlanDate(getPlanDate());
@@ -378,7 +366,7 @@ public class NoteFragment extends Fragment {
         //if the date is selected
         if (!tvPlanDateNew.getText().toString().isEmpty()) {
             SimpleDateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
-            //Calendar cal = Calendar.getInstance();
+
             try {
                 cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
                 year = (cal.get(Calendar.YEAR));
@@ -436,7 +424,7 @@ public class NoteFragment extends Fragment {
         spStatus = vCreateNewNote.findViewById(R.id.spStatus);
     }
 
-    public void createDatabaseNote() { // Khởi tạo các giá trị cho database
+    public void createDatabaseNote() { // create value for database
         noteDB = RoomDB.getDatabase(requireContext());
         statusDAO = noteDB.statusDAO();
         categoryDAO = noteDB.categoryDAO();
