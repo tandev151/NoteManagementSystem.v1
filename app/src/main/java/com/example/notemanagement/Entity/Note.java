@@ -150,7 +150,9 @@ public class Note {
         return "";
     }
 
-    public Note(){}
+    public Note(){
+
+    }
 
     public Note(String name, Integer categoryId, Integer priorityId, Integer statusId, Date planDate, Date createDate, Integer accountId) {
 

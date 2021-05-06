@@ -107,26 +107,32 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
         Note note = getlNote().get(position);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        if(lCategory!=null && note.getCategoryId()!= null){
+            for (int i = 0; i < lCategory.size(); i++) { // name Category
+                if (lCategory.get(i).getCategoryId() == note.getCategoryId()) {
+                    holder.tvCategory.setText(lCategory.get(i).getName());
+                    break;
+                }
+            }
+        }
+        if(lStatus!=null && note.getStatusId()!=null){
+            for (int i = 0; i < lStatus.size(); i++) { //name Status
+                if (lStatus.get(i).getStatusId() == note.getStatusId()) {
+                    holder.tvStatus.setText(lStatus.get(i).getName());
+                    break;
+                }
+            }
+        }
 
-        for (int i = 0; i < lCategory.size(); i++) { // name Category
-            if (lCategory.get(i).getCategoryId() == note.getCategoryId()) {
-                holder.tvCategory.setText(lCategory.get(i).getName());
-                break;
-            }
-        }
-        for (int i = 0; i < lStatus.size(); i++) { //name Status
-            if (lStatus.get(i).getStatusId() == note.getStatusId()) {
-                holder.tvStatus.setText(lStatus.get(i).getName());
-                break;
+        if(lPriority != null && note.getPriorityId() != null){
+            for (int i = 0; i < lPriority.size(); i++) { //name Priority
+                if (lPriority.get(i).getPriorityId() == note.getPriorityId()) {
+                    holder.tvPriority.setText(lPriority.get(i).getName());
+                    break;
+                }
             }
         }
 
-        for (int i = 0; i < lPriority.size(); i++) { //name Priority
-            if (lPriority.get(i).getPriorityId() == note.getPriorityId()) {
-                holder.tvPriority.setText(lPriority.get(i).getName());
-                break;
-            }
-        }
 
         if (note.getCreateDate() != null) {
             holder.tvCreateDate.setText(dateFormat.format(note.getCreateDate()));
