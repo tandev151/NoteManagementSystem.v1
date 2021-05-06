@@ -85,7 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     createDialog("Successfully create your register!!!","Notification");
 
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
-//                                    context.startActivity(mainActivity);
+                                   startActivity(mainActivity);
 //                                    mainActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 }
                             });
