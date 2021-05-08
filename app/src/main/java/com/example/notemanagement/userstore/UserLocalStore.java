@@ -3,8 +3,6 @@ package com.example.notemanagement.userstore;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.room.RoomDatabase;
-
 import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.RoomDB;
@@ -16,7 +14,6 @@ public class UserLocalStore {
     private AccountDAO accountDAO;
     public UserLocalStore(Context context){
 
-        //database= RoomDB.getDatabase(context);
         accountDAO= RoomDB.getDatabase(context).accountDAO();
         userLocalStore= context.getSharedPreferences(SP_NAME,0);
 
@@ -24,7 +21,6 @@ public class UserLocalStore {
 
     public void storeUserData(Account user){
         SharedPreferences.Editor editor= userLocalStore.edit();
-        //User user1= mrepository.getUserByEmail(user.getEmail());
         editor.putInt("idUser",user.getId());
         editor.putString("emailUser", user.getUserName());
         editor.putString("lastnameUser", user.getLastName());

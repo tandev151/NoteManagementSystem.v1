@@ -1,50 +1,13 @@
 package com.example.notemanagement.Entity;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
-import androidx.room.Dao;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
 
-import com.example.notemanagement.Convert;
-
-import java.sql.Time;
 import java.util.Date;
 
 @Entity(tableName = "Note")
-//@Entity(tableName = "Note", foreignKeys = {@ForeignKey
-//        (entity = Status.class,
-//        parentColumns = "StatusId",
-//        childColumns = "StatusId"
-//
-//), @ForeignKey
-//        (entity = Category.class,
-//                parentColumns = "CategoryId",
-//                childColumns = "CategoryId"
-//
-//        ),
-//
-//        @ForeignKey
-//                (entity = Priority.class,
-//                        parentColumns = "PriorityId",
-//                        childColumns = "PriorityId"
-//
-//                ),
-//
-//        @ForeignKey
-//                (entity = Account.class,
-//                        parentColumns = "AccountId",
-//                        childColumns = "AccountId"
-//
-//                )
-//}
-//)
-
-
 public class Note {
 
     @PrimaryKey(autoGenerate = true)

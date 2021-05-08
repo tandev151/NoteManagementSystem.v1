@@ -2,7 +2,6 @@ package com.example.notemanagement.ui.category;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,6 @@ public class CategoryFragment extends Fragment {
     private CategoryAdapter categoryAdapter;
     private FloatingActionButton fptAddCategory;
     View root;
-
     //get database
     RoomDB db;
 
@@ -94,7 +92,7 @@ public class CategoryFragment extends Fragment {
         super.onContextItemSelected(item);
 
         switch (item.getItemId()) {
-            case UPDATE_CODE: //Update
+            case UPDATE_CODE:
                 //get element was update by index in adapter
                 int position = item.getGroupId();
 

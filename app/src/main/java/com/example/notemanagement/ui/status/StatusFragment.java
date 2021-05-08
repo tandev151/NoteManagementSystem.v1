@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.notemanagement.Entity.Account;
-import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
@@ -67,8 +65,7 @@ public class StatusFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         statusAdapter = new StatusAdapter(requireContext());
-
-        //SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MY_PREFERENCE_NAME, Context.MODE_PRIVATE).edit();
+        //get User
         currentAcc = new Account();
         userLocalStore = new UserLocalStore(requireContext());
 
@@ -88,7 +85,6 @@ public class StatusFragment extends Fragment {
 
             recyclerViewStatus.setLayoutManager(layoutManager);
             recyclerViewStatus.setAdapter(statusAdapter);
-
         });
 
         //Add event for floating action button
@@ -170,7 +166,6 @@ public class StatusFragment extends Fragment {
                     alertDialog.show();
                 }
                 break;
-
             case DELETE_CODE:
                 //get true id
                 int positionDelete = item.getGroupId();
@@ -240,7 +235,6 @@ public class StatusFragment extends Fragment {
                             edtNewName.setFocusable(true);
                         }
                     });
-
                 } else {
                     db.statusDAO().insert(status);
                     alertDialog.dismiss();

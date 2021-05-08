@@ -3,13 +3,11 @@ package com.example.notemanagement.Entity;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.notemanagement.Convert;
 
-import java.util.Calendar;
 import java.util.Date;
 
 @Entity(tableName="Status")

@@ -17,6 +17,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
+import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
+
 public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder> {
     private List<Status> statusList;
     private Context context;
@@ -50,8 +53,9 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(), 1, 1, "Delete");
-            menu.add(getAdapterPosition(), 2, 1, "Edit");
+            menu.add(getAdapterPosition(), UPDATE_CODE, 1, "Edit");
+            menu.add(getAdapterPosition(), DELETE_CODE, 1, "Delete");
+
         }
 
         public ViewHolder(View view, List<Status> statusList, Context context) {
@@ -80,7 +84,6 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
         ViewHolder viewHolder = new ViewHolder(statusView, statusList, context);
         return viewHolder;
     }
-
     /*
     class is used to assign data for view holder
      */

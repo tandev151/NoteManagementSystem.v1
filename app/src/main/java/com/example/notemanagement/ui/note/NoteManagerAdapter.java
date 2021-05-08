@@ -1,42 +1,26 @@
 package com.example.notemanagement.ui.note;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.PopupMenu;
-import android.widget.Spinner;
+
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.lifecycle.LiveData;
+
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notemanagement.DAO.CategoryDAO;
-import com.example.notemanagement.DAO.NoteDAO;
-import com.example.notemanagement.DAO.StatusDAO;
 import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Note;
 import com.example.notemanagement.Entity.Priority;
 import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
-import com.example.notemanagement.RoomDB;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+
 import java.util.List;
 
 public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.NoteViewHolder> {
@@ -63,24 +47,6 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
     public Context context;
 
-    public void setlNote(List<Note> lnote) {
-        this.lNote = lnote;
-    }
-
-    public NoteManagerAdapter(List<Note> list, Context context) {
-
-        setlNote(list);
-        this.context = context;
-    }
-
-    public NoteManagerAdapter(ArrayList<Note> listNote, List<Category> lcategory, List<Status> lstatus, Context context) {
-
-        this.lNote = listNote;
-        this.lStatus = lstatus;
-        this.lCategory = lcategory;
-        this.context = context;
-    }
-
     private List<Priority> lPriority;
 
     public NoteManagerAdapter(List<Note> listNote, List<Category> lcategory, List<Status> lstatus, List<Priority> lpriority, Context context) {
@@ -91,7 +57,6 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
         this.context = context;
         this.lPriority = lpriority;
     }
-
     @NonNull
     @Override
 
@@ -105,7 +70,8 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
 
         Note note = getlNote().get(position);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormatCreateDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        DateFormat dateFormatPlanDate = new SimpleDateFormat("yyyy/MM/dd");
 
         if(lCategory!=null && note.getCategoryId()!= null){
             for (int i = 0; i < lCategory.size(); i++) { // name Category
@@ -116,7 +82,8 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
             }
         }
         if(lStatus!=null && note.getStatusId()!=null){
-            for (int i = 0; i < lStatus.size(); i++) { //name Status
+            for (int i = 0; i < lStatus.size(); i++) {
+                //name Status
                 if (lStatus.get(i).getStatusId() == note.getStatusId()) {
                     holder.tvStatus.setText(lStatus.get(i).getName());
                     break;
@@ -132,34 +99,22 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
                 }
             }
         }
-
-
         if (note.getCreateDate() != null) {
-            holder.tvCreateDate.setText(dateFormat.format(note.getCreateDate()));
+            holder.tvCreateDate.setText(dateFormatCreateDate.format(note.getCreateDate()));
         }
-
         if (note.getPlanDate() != null) {
-            holder.tvPlanDate.setText(dateFormat.format(note.getPlanDate()));
+            holder.tvPlanDate.setText(dateFormatPlanDate.format(note.getPlanDate()));
         }
-
         holder.tvNameNote.setText(note.getName());
-
     }
 
     @Override
     public int getItemCount() {
-
         return lNote.size();
     }
-
     public static class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
-
         private TextView tvNameNote, tvPriority, tvStatus, tvCategory, tvPlanDate, tvCreateDate;
-
-        public TextView getTvNameNote() {
-            return tvNameNote;
-        }
 
         private List<Status> lStatus;
         private List<Category> lCategory;
@@ -186,30 +141,10 @@ public class NoteManagerAdapter extends RecyclerView.Adapter<NoteManagerAdapter.
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(), 1, 1, "Delete");
             menu.add(getAdapterPosition(), 2, 1, "Edit");
-        }
+            menu.add(getAdapterPosition(), 1, 1, "Delete");
 
-        public TextView getTvPriority() {
-            return tvPriority;
         }
-
-        public TextView getTvStatus() {
-            return tvStatus;
-        }
-
-        public TextView getTvCategory() {
-            return tvCategory;
-        }
-
-        public TextView getTvPlanDate() {
-            return tvPlanDate;
-        }
-
-        public TextView getTvCreateDate() {
-            return tvCreateDate;
-        }
-
 
     }
 

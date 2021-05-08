@@ -11,13 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notemanagement.Entity.Category;
-import com.example.notemanagement.Entity.Status;
 import com.example.notemanagement.R;
-import com.example.notemanagement.ui.status.StatusAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
+import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private List<Category> categoryList;
@@ -47,8 +48,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(),1,1,"Delete");
-            menu.add(getAdapterPosition(),2,1,"Edit");
+            menu.add(getAdapterPosition(),UPDATE_CODE,1,"Edit");
+            menu.add(getAdapterPosition(),DELETE_CODE,1,"Delete");
         }
 
         public ViewHolder(View view, List<Category> listCategory, Context context) {

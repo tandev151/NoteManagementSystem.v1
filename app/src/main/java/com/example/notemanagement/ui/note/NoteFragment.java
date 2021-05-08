@@ -1,13 +1,10 @@
 package com.example.notemanagement.ui.note;
 
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.lifecycle.ViewModelProvider;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,14 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.renderscript.RenderScript;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -37,32 +30,25 @@ import com.example.notemanagement.DAO.CategoryDAO;
 import com.example.notemanagement.DAO.NoteDAO;
 import com.example.notemanagement.DAO.PriorityDAO;
 import com.example.notemanagement.DAO.StatusDAO;
-import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Note;
 import com.example.notemanagement.Entity.Priority;
 import com.example.notemanagement.Entity.Status;
-import com.example.notemanagement.NoteManagementActivity;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
-import com.example.notemanagement.SignInActivity;
 import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.notemanagement.Utils.CONSTANT.SUCCESS_MESSAGE;
-
 public class NoteFragment extends Fragment {
-
+    //init
     private FloatingActionButton btnCreateNote;
     private View vCreateNewNote;
     private RecyclerView rvListNote;
@@ -94,7 +80,7 @@ public class NoteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_note, container, false);
-
+        //===================== Hook ==============================================================
         context = root.getContext();
         rvListNote = root.findViewById(R.id.rvListNote);
         btnCreateNote = root.findViewById(R.id.btnCreateNote);
@@ -147,7 +133,6 @@ public class NoteFragment extends Fragment {
             linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
             rvListNote.setLayoutManager(linearLayoutManager);
         });
-
     }
 
     private void loadListSpinner(int userId) { // get all list for spinner
@@ -198,7 +183,6 @@ public class NoteFragment extends Fragment {
 
         if (note.getPlanDate() != null)
             tvPlanDateNew.setText(formater.format(note.getPlanDate()));
-
 
         setBtnPlanDate();
 
@@ -289,7 +273,6 @@ public class NoteFragment extends Fragment {
         builder.setPositiveButton("Add", (dialog, which) -> {
 
             //Validate plan date
-
             try {
                 note.setCategoryId(((Category) spCategory.getSelectedItem()).getCategoryId());
             } catch (Exception e) {
@@ -309,21 +292,17 @@ public class NoteFragment extends Fragment {
             note.setPlanDate(getPlanDate());
             createNewNote(note);
             dialog.dismiss();
-
-
         })
                 .setNegativeButton("Close", (dialog, which) ->
                 {
                     dialog.dismiss();
                 });
-
-
         builder.show();
     }
 
     private Date getPlanDate() {
         Calendar cal = Calendar.getInstance();
-        DateFormat simpFormat = new SimpleDateFormat("E, MMM dd yyyy");
+        DateFormat simpFormat = new SimpleDateFormat("E, dd-mm-yyyy");
         try {
             cal.setTime(simpFormat.parse(tvPlanDateNew.getText().toString()));
         } catch (Exception e) {
@@ -415,7 +394,6 @@ public class NoteFragment extends Fragment {
     }
 
     private void initializationComponentForViewCreateNewNote() {
-
         tvPlanDateNew = vCreateNewNote.findViewById(R.id.tvPlanDateNew);
         btnPlanDate = vCreateNewNote.findViewById(R.id.btnPlanDate);
         spPriority = vCreateNewNote.findViewById(R.id.spPriority);

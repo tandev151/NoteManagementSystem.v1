@@ -1,52 +1,31 @@
 package com.example.notemanagement.ui.home;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.icu.number.Precision;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.room.Room;
-
 
 import com.example.notemanagement.Entity.PointChart;
 import com.example.notemanagement.R;
 import com.example.notemanagement.RoomDB;
 import com.example.notemanagement.userstore.UserLocalStore;
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.SplittableRandom;
-
-import javax.sql.DataSource;
 
 public class HomeFragment extends Fragment {
     private RoomDB roomDB;
@@ -136,14 +115,11 @@ public class HomeFragment extends Fragment {
         for (int color : ColorTemplate.MATERIAL_COLORS) {
             colors.add(color);
         }
-
         pieDataSet.setColors(colors);
 
+        //Set data
         PieData pieData = new PieData(pieDataSet);
-
         pieChart.setData(pieData);
         pieChart.invalidate();
     }
-
-
 }

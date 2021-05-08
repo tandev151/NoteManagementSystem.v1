@@ -1,6 +1,7 @@
 package com.example.notemanagement;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
 
 import android.content.Intent;
@@ -19,35 +20,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        context=this;
-        userLocalStore= new UserLocalStore(this);
+        context = this;
+        userLocalStore = new UserLocalStore(this);
 
 
         new Handler().postDelayed(new Runnable() {
 
             @Override
             public void run() {
-
-                if(userLocalStore.checkRememberPass())
-                {
+                if (userLocalStore.checkRememberPass()) {
                     Intent signInActivity = new Intent(context, SignInActivity.class);
-                    if (userLocalStore.getLoginUser()!=null)
-                    {
+                    if (userLocalStore.getLoginUser() != null) {
                         signInActivity.putExtra("Remember", true);
 
                     }
-
                     context.startActivity(signInActivity);
-                }
-                else
-                {
+                } else {
                     Intent signinActivity = new Intent(context, SignInActivity.class);
                     context.startActivity(signinActivity);
-
                 }
-
             }
-        },3000);
+        }, 1500);
     }
-
 }

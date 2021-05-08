@@ -10,18 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notemanagement.Entity.Category;
 import com.example.notemanagement.Entity.Priority;
 import com.example.notemanagement.R;
-import com.example.notemanagement.ui.category.CategoryAdapter;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static com.example.notemanagement.Utils.CONSTANT.DELETE_CODE;
 import static com.example.notemanagement.Utils.CONSTANT.UPDATE_CODE;
-
 
 public class PriorityAdapter extends RecyclerView.Adapter<PriorityAdapter.ViewHolder> {
     private List<Priority> priorityList;
@@ -56,8 +52,9 @@ public class PriorityAdapter extends RecyclerView.Adapter<PriorityAdapter.ViewHo
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(getAdapterPosition(), DELETE_CODE, 1, "Delete");
             menu.add(getAdapterPosition(), UPDATE_CODE, 1, "Edit");
+            menu.add(getAdapterPosition(), DELETE_CODE, 1, "Delete");
+
         }
 
         public ViewHolder(View view, List<Priority> listPriority, Context context) {
@@ -71,7 +68,6 @@ public class PriorityAdapter extends RecyclerView.Adapter<PriorityAdapter.ViewHo
             view.setOnCreateContextMenuListener(this);
         }
     }
-
     /*
     Class is used to set layout for view holder
      */

@@ -82,9 +82,6 @@ public class PriorityFragment extends Fragment {
             recyclerViewPriority.setLayoutManager(layoutManager);
         });
 
-        //Get share preference for check
-
-
         //Add event for floating action button
         fptAddPriority = (FloatingActionButton) view.findViewById(R.id.fptAddPriority);
         fptAddPriority.setOnClickListener((View v) -> {
@@ -97,7 +94,7 @@ public class PriorityFragment extends Fragment {
         super.onContextItemSelected(item);
 
         switch (item.getItemId()) {
-            case UPDATE_CODE: //Update
+            case UPDATE_CODE:
                 //get element was update by index in adapter
                 int position = item.getGroupId();
 
@@ -186,7 +183,6 @@ public class PriorityFragment extends Fragment {
         }
         return true;
     }
-
     /**
      * Create new priority
      *

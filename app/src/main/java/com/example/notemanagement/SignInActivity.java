@@ -2,7 +2,6 @@ package com.example.notemanagement;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,9 +19,9 @@ import com.example.notemanagement.userstore.UserLocalStore;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class SignInActivity extends AppCompatActivity {
-
-    Button btnSignIn,btnExit;
-    EditText edtUserName,edtPassWord;
+    //Init
+    Button btnSignIn, btnExit;
+    EditText edtUserName, edtPassWord;
     FloatingActionButton fabSignUp;
     Context context;
     AccountDAO accountDAO;
@@ -37,16 +36,15 @@ public class SignInActivity extends AppCompatActivity {
         edtUserName = findViewById(R.id.editTextUserNameSignIn);
         edtPassWord = findViewById(R.id.editTextPasswordSignIn);
         btnSignIn = findViewById(R.id.buttonSignIn);
-        cbremember= findViewById(R.id.checkBox);
+        cbremember = findViewById(R.id.checkBox);
 
-        userLocalStore= new UserLocalStore(this);
-        context= this;
-        Intent t= this.getIntent();
-        Boolean remember= t.getBooleanExtra("Remember", false);
-        if(remember)
-        {
-            Account account= new Account();
-            account= userLocalStore.getLoginUser();
+        userLocalStore = new UserLocalStore(this);
+        context = this;
+        Intent t = this.getIntent();
+        Boolean remember = t.getBooleanExtra("Remember", false);
+        if (remember) {
+            Account account = new Account();
+            account = userLocalStore.getLoginUser();
             edtUserName.setText(account.getUserName());
             edtPassWord.setText(account.getPassword());
             cbremember.setChecked(true);
@@ -57,28 +55,22 @@ public class SignInActivity extends AppCompatActivity {
         fabSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(SignInActivity.this,SignUpActivity.class);
+                Intent i = new Intent(SignInActivity.this, SignUpActivity.class);
                 startActivity(i);
             }
         });
-
-
-
         btnSignIn.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 String username = edtUserName.getText().toString();
                 String password = edtPassWord.getText().toString();
 
-                if(username.isEmpty() || password.isEmpty()){
-                    createDialog("You must enter your email and password","Notification");
-                }
-                else
-                {
+                if (username.isEmpty() || password.isEmpty()) {
+                    createDialog("You must enter your email and password", "Notification");
+                } else {
                     RoomDB roomDB = RoomDB.getDatabase(getApplicationContext());
                     accountDAO = roomDB.accountDAO();
-                    RoomDB.databaseWriteExecutor.execute(()->{
+                    RoomDB.databaseWriteExecutor.execute(() -> {
 
                         Account checkuser = new Account();
                         checkuser = accountDAO.getUserByMail(edtUserName.getText().toString().trim());
@@ -89,16 +81,12 @@ public class SignInActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Email was incorrect", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                        }
-                        else if (checkuser.getPassword().equals(edtPassWord.getText().toString())) {
+                        } else if (checkuser.getPassword().equals(edtPassWord.getText().toString())) {
                             userLocalStore.setUserLogined(true);
                             userLocalStore.storeUserData(checkuser);
-
-                            if(cbremember.isChecked())
-                            {
+                            if (cbremember.isChecked()) {
                                 userLocalStore.setRememberPass(true);
-                            }
-                            else
+                            } else
                                 userLocalStore.setRememberPass(false);
                             //Announce on screen that success
                             runOnUiThread(new Runnable() {
@@ -109,8 +97,7 @@ public class SignInActivity extends AppCompatActivity {
                                     context.startActivity(mainActivity);
                                 }
                             });
-                        }
-                        else {
+                        } else {
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     Toast.makeText(getApplicationContext(), "Password was incorrect", Toast.LENGTH_SHORT).show();
@@ -118,9 +105,7 @@ public class SignInActivity extends AppCompatActivity {
                             });
                         }
                     });
-                    //---------------------------
                 }
-
             }
         });
 
@@ -132,10 +117,9 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void createDialog(String text, String title){
+    public void createDialog(String text, String title) {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setPositiveButton("OK",null)
+                .setPositiveButton("OK", null)
                 .setTitle(title)
                 .setMessage(text)
                 .create();

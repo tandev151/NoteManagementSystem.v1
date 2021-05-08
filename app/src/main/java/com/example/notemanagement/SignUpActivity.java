@@ -7,25 +7,19 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PatternMatcher;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.notemanagement.RoomDB;
 import com.example.notemanagement.DAO.AccountDAO;
 import com.example.notemanagement.Entity.Account;
 import com.example.notemanagement.userstore.UserLocalStore;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-
 
 public class SignUpActivity extends AppCompatActivity {
 
-    RoomDB db;
     Button btnSignIn;
     EditText edtUserName;
     EditText edtPass;
@@ -54,13 +48,11 @@ public class SignUpActivity extends AppCompatActivity {
                 Intent intent = new Intent(SignUpActivity.this,SignInActivity.class);
                 startActivity(intent);
             }
-
         });
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(checkInput() ){
 
                     RoomDB.databaseWriteExecutor.execute(()->
@@ -86,10 +78,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                                     Intent mainActivity = new Intent(context, NoteManagementActivity.class);
                                    startActivity(mainActivity);
-//                                    mainActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 }
                             });
-
                         }
                         else
                         {
@@ -99,15 +89,12 @@ public class SignUpActivity extends AppCompatActivity {
                                     createDialog("Email already exists","Notification");
                                 }
                             });
-
                         }
                     });
                 }
-
             }
         });
     }
-
 
     private void createDialog(String text,String title) {
         AlertDialog ad = new AlertDialog.Builder(this)
