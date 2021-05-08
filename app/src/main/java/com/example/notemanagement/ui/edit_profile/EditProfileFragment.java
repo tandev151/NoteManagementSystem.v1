@@ -58,32 +58,33 @@ public class EditProfileFragment extends Fragment {
 
                         Account checkemail = new Account();
                         checkemail = accountDAO.getUserByMail(edtEmail.getText().toString());
-
                         if (checkemail != null) {
                             if (checkemail.getId() != loginedUser.getId()) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getActivity(), "Email was exist!!!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Email existed!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                            } else {
-                                Account user = new Account(loginedUser.getId(),
-                                        edtEmail.getText().toString().trim(),
-                                        loginedUser.getPassword(),
-                                        edtFirstName.getText().toString().trim(),
-                                        edtLastName.getText().toString().trim());
-
-                                accountDAO.update(user);
-                                userLocalStore.storeUserData(user);
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getActivity(), "Update successfully!", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                return;
                             }
                         }
+                        Account user = new Account(loginedUser.getId(),
+                                edtEmail.getText().toString().trim(),
+                                loginedUser.getPassword(),
+                                edtFirstName.getText().toString().trim(),
+                                edtLastName.getText().toString().trim());
+
+                        accountDAO.update(user);
+                        userLocalStore.storeUserData(user);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //userLocalStore.setmEmailUser(user.getUserName());
+                                //tvUserName.setText(user.getUserName());
+                                Toast.makeText(getActivity(), "Update successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     });
                 }
             }

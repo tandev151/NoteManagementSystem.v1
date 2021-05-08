@@ -115,6 +115,11 @@ public class ChangePasswordFragment extends Fragment {
             tvErr.setText("All info need filled in!!!");
             return false;
         }
+        if(newpass.getText().toString().length()<5)
+        {
+            Toast.makeText(getActivity(),"Your password have to be more than 5 characters !", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
